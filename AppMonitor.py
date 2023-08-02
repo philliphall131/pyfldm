@@ -37,7 +37,7 @@ class AppMonitor:
         else:
             logger.debug("Detected Linux/Other OS")
 
-    def is_running(self) -> int:
+    def _get_process_id(self) -> int:
         if self.platform == 'win32':
             # check on windows
             pass
@@ -49,6 +49,9 @@ class AppMonitor:
                 return 0
             else:
                 return int(process2.decode().strip())
+
+    def is_running(self) -> bool:
+        return True if self._get_process_id else False
     
     def is_functional(self) -> bool:
         try:
