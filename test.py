@@ -3,9 +3,9 @@ from Logger import logger
 from time import sleep
 
 a = AppMonitor()
-a.start()
+# a.start()
 
-sleep(5)
+# sleep(5)
 
 a.kill()
 
