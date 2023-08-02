@@ -1,7 +1,7 @@
 ################################################################
 # 
 # File: AppMonitor.py
-# Copyright(c) 2023, Hallway Trails LLC. All rights reserved.
+# Copyright(c) 2023, Phillip Hall. All rights reserved.
 #
 ################################################################
 
