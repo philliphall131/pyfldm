@@ -1,13 +1,16 @@
 from AppMonitor import AppMonitor
 from Logger import logger
 from time import sleep
+from client.Client import Client
+from client.Fldigi import Fldigi
 
 a = AppMonitor()
 a.start()
+client = Client()
 
-sleep(5)
+# sleep(2)
+print(type(client.io.enable_arq()))
 
-a.kill()
 
 
 # keep_running = True
