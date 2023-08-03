@@ -27,7 +27,7 @@ class AppMonitor:
         self.process = None
         self.hostname = hostname
         self.port = int(port)
-        self._client = xmlrpc.client.ServerProxy('http://{}:{}/'.format(self.hostname, self.port))
+        self._client = xmlrpc.client.ServerProxy(f'http://{self.hostname}:{self.port}/')
 
         # log platform
         if self.platform == 'darwin':
@@ -51,7 +51,7 @@ class AppMonitor:
                 return int(process2.decode().strip())
 
     def is_running(self) -> bool:
-        return True if self._get_process_id else False
+        return True if self._get_process_id() else False
     
     def is_functional(self) -> bool:
         try:
@@ -66,7 +66,7 @@ class AppMonitor:
     def _wait_for_startup(self, timeout_secs = MAX_STARTUP_DELAY_SECS, sleep_secs = .5) -> bool:
         start = time()
         while (start + timeout_secs) > time():
-            if not self.is_running():
+            if self.is_functional():
                 return True
             sleep(sleep_secs)
         return False
@@ -74,7 +74,7 @@ class AppMonitor:
     def _wait_for_shutdown(self, timeout_secs = MAX_SHUTDOWN_DELAY_SECS, sleep_secs = .5) -> bool:
         start = time()
         while (start + timeout_secs) > time():
-            if self.is_functional():
+            if not self.is_functional():
                 return True
             sleep(sleep_secs)
         return False
@@ -93,7 +93,6 @@ class AppMonitor:
 
         if self.platform == 'darwin':
             # start with MacOS
-            logger.info("Fldigi not running, starting a new instance")
             # find the application name
             process1 = subprocess.Popen(['ls', '/Applications'], stdout=subprocess.PIPE)
             process2 = subprocess.check_output(['grep', 'fldigi'], stdin=process1.stdout)
@@ -108,7 +107,7 @@ class AppMonitor:
 
         else:
             # start with linux
-            pass
+            self.process = subprocess.Popen(['fldigi'] + addl_args)
 
         if self._wait_for_startup():
             logger.debug("Fldigi fully functional")
@@ -134,7 +133,7 @@ class AppMonitor:
     
     def kill(self) -> int:
         # first verify its actually running
-        process_id = self.is_running()
+        process_id = self._get_process_id()
         if not self.is_running():
             logger.info("No Fldigi instances running, nothing to shut down")
             return 0
