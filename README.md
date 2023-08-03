@@ -8,7 +8,7 @@ Example uses:
 1. Controlling the Application (start, stop, status)
 ```
 >>> import pyfldm
->>> app = AppMonitor()
+>>> app = pyfldm.AppMonitor()
 >>> app.start()
 >>> # wait a few seconds for Fldigi to start up
 >>> app.is_running() # checks that Fldigi is a currently running process
@@ -27,7 +27,7 @@ False
 ```
 # * assuming that Fldigi is already running
 >>> import pyfldm
->>> client = Client()
+>>> client = pyfldm.Client()
 >>> client.fldigi.version()
 4.1.26
 
