@@ -1,6 +1,6 @@
 ################################################################
 # 
-#  File: Fldigi.py
+#  File: Log.py
 #  Copyright(c) 2023, Phillip Hall. All rights reserved.
 #
 ################################################################
@@ -26,37 +26,193 @@ class Log:
 
     def clear(self) -> None:
         '''Clears the contents of the log fields'''
-        return self.client.log.clear()
+        self.client.log.clear()
     
     def get_az(self) -> str:
         '''Gets the AZ field contents
         
         @return (str): the AZ field contents
         '''
-        return self.client.log.clear()
+        return self.client.log.get_az()
     
-# log.get_band	s:n	Returns the current band name
-# log.get_call	s:n	Returns the Call field contents
-# log.get_country	s:n	Returns the Country field contents
-# log.get_exchange	s:n	Returns the contest exchange field contents
-# log.get_frequency	s:n	Returns the Frequency field contents
-# log.get_locator	s:n	Returns the Locator field contents
-# log.get_name	s:n	Returns the Name field contents
-# log.get_notes	s:n	Returns the Notes field contents
-# log.get_province	s:n	Returns the Province field contents
-# log.get_qth	s:n	Returns the QTH field contents
-# log.get_rst_in	s:n	Returns the RST(r) field contents
-# log.get_rst_out	s:n	Returns the RST(s) field contents
-# log.get_serial_number	s:n	Returns the serial number field contents
-# log.get_serial_number_sent	s:n	Returns the serial number (sent) field contents
-# log.get_state	s:n	Returns the State field contents
-# log.get_time_off	s:n	Returns the Time-Off field contents
-# log.get_time_on	s:n	Returns the Time-On field contents
-# log.set_call	n:s	Sets the Call field contents
-# log.set_exchange	n:s	Sets the contest exchange field contents
-# log.set_locator	n:s	Sets the Locator field contents
-# log.set_name	n:s	Sets the Name field contents
-# log.set_qth	n:s	Sets the QTH field contents
-# log.set_rst_in	n:s	Sets the RST(r) field contents
-# log.set_rst_out	n:s	Sets the RST(s) field contents
-# log.set_serial_number	n:s	Sets the serial number field contents
+    def get_band(self) -> str:
+        '''Gets the current band name
+        
+        @return (str): the current band name
+        '''
+        return self.client.log.get_band()
+    
+    def get_call(self) -> str:
+        '''Gets the call field contents
+        
+        @return (str): the call field contents
+        '''
+        return self.client.log.get_call()
+    
+    def get_country(self) -> str:
+        '''Gets the country field contents
+        
+        @return (str): the country field contents
+        '''
+        return self.client.log.get_country()
+    
+    def get_exchange(self) -> str:
+        '''Gets the contest exchange field contents
+        
+        @return (str): the contest exchange field contents
+        '''
+        return self.client.log.get_exchange()
+    
+    def get_frequency(self) -> str:
+        '''Gets the frequency field contents
+        
+        @return (str): the frequency field contents
+        '''
+        return self.client.log.get_frequency()
+    
+    def get_locator(self) -> str:
+        '''Gets the locator field contents
+        
+        @return (str): the locator field contents
+        '''
+        return self.client.log.get_locator()
+    
+    def get_name(self) -> str:
+        '''Gets the name field contents
+        
+        @return (str): the name field contents
+        '''
+        return self.client.log.get_name()
+    
+    def get_notes(self) -> str:
+        '''Gets the notes field contents
+        
+        @return (str): the notes field contents
+        '''
+        return self.client.log.get_notes()
+    
+    def get_providence(self) -> str:
+        '''Gets the providence field contents
+        
+        @return (str): the providence field contents
+        '''
+        return self.client.log.get_providence()
+    
+    def get_qth(self) -> str:
+        '''Gets the Qth field contents
+        
+        @return (str): the Qth field contents
+        '''
+        return self.client.log.get_qth()
+    
+    def get_rst_in(self) -> str:
+        '''Gets the RST(r) field contents
+        
+        @return (str): the RST(r) field contents
+        '''
+        return self.client.log.get_rst_in()
+    
+    def get_rst_out(self) -> str:
+        '''Gets the RST(s) field contents
+        
+        @return (str): the RST(s) field contents
+        '''
+        return self.client.log.get_rst_out()
+    
+    def get_serial_number(self) -> str:
+        '''Gets the serial number field contents
+        
+        @return (str): the serial number field contents
+        '''
+        return self.client.log.get_serial_number()
+    
+    def get_serial_number_sent(self) -> str:
+        '''Gets the serial number (sent) field contents
+        
+        @return (str): the serial number (sent) field contents
+        '''
+        return self.client.log.get_serial_number_sent()
+    
+    def get_state(self) -> str:
+        '''Gets the state field contents
+        
+        @return (str): the state field contents
+        '''
+        return self.client.log.get_state()
+
+    def get_time_off(self) -> str:
+        '''Gets the Time-off field contents
+        
+        @return (str): the time-off field contents
+        '''
+        return self.client.log.get_time_off()
+    
+    def get_time_on(self) -> str:
+        '''Gets the Time-on field contents
+        
+        @return (str): the time-on field contents
+        '''
+        return self.client.log.get_time_on()
+    
+    def set_call(self, call_str) -> None:
+        '''Sets the call field contents
+        
+        @param call_str(str): the string to populate in the call field
+        '''
+        self.client.log.set_call(call_str)
+    
+    def set_exchange(self, exchange_str) -> None:
+        '''Sets the contest exchange field contents
+        
+        @param exchange_str(str): the string to populate in the contest exchange field
+        '''
+        self.client.log.set_exchange(exchange_str)
+
+    def set_locator(self, locator_str) -> None:
+        '''Sets the locator field contents
+        
+        @param locator_str(str): the string to populate in the locator field
+        '''
+        self.client.log.set_locator(locator_str)
+    
+    def set_name(self, name_str) -> None:
+        '''Sets the name field contents
+        
+        @param name_str(str): the string to populate in the name field
+        '''
+        self.client.log.set_name(name_str)
+
+    def set_name(self, name_str) -> None:
+        '''Sets the name field contents
+        
+        @param name_str(str): the string to populate in the name field
+        '''
+        self.client.log.set_name(name_str)
+    
+    def set_qth(self, qth_str) -> None:
+        '''Sets the Qth field contents
+        
+        @param qth_str(str): the string to populate in the Qth field
+        '''
+        self.client.log.set_qth(qth_str)
+
+    def set_rst_in(self, rst_in_str) -> None:
+        '''Sets the RST(r) field contents
+        
+        @param rst_in_str(str): the string to populate in the RST(r) field
+        '''
+        self.client.log.set_rst_in(rst_in_str)
+    
+    def set_rst_out(self, rst_out_str) -> None:
+        '''Sets the RST(s) field contents
+        
+        @param rst_out_str(str): the string to populate in the RST(s) field
+        '''
+        self.client.log.set_rst_out(rst_out_str)
+
+    def set_serial_number(self, serial_number_str) -> None:
+        '''Sets the serial number field contents
+        
+        @param serial_number_str(str): the string to populate in the serial number field
+        '''
+        self.client.log.set_serial_number(serial_number_str)

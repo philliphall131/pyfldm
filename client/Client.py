@@ -8,6 +8,7 @@
 import xmlrpc.client
 from client.Fldigi import Fldigi
 from client.IoConfig import IoConfig
+from client.Main import Main
 
 class Client:
     def __init__(self, hostname='127.0.0.1', port=7362) -> None:
@@ -17,6 +18,7 @@ class Client:
 
         self.fldigi = Fldigi(self.client)
         self.io = IoConfig(self.client)
+        self.main = Main(self.client)
 
     @property
     def methods(self):
