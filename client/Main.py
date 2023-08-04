@@ -42,7 +42,7 @@ class Main:
         '''
         return self.client.main.get_char_rates()
     
-    def get_char_timing(self, char_bytes) -> str:
+    def get_char_timing(self, char_bytes: bytes) -> str:
         '''Gets transmit duration for the specified character
 
         @param char_bytes(bytes): the bitmask to send for the character (samples:sample rate)
@@ -127,7 +127,7 @@ class Main:
         '''
         return self.client.main.get_trx_status()
     
-    def get_trx_timing(self, bitmask) -> str:
+    def get_trx_timing(self, bitmask: bytes) -> str:
         '''Gets the transmit duration for test string (samples:sample rate:secs)
 
         @param bitmask(bytes): the bytes to specify the test string (samples:sample rate:secs)
@@ -178,20 +178,123 @@ class Main:
         '''Sets normal Rx/Tx switching'''
         self.client.main.rx_tx()
 
-# main.set_afc	b:b	Sets the AFC state. Returns the old state
-# main.set_frequency	d:d	Sets the RF carrier frequency. Returns the old value
-# main.set_lock	b:b	Sets the Transmit Lock state. Returns the old state
-# main.set_reverse	b:b	Sets the Reverse Sideband state. Returns the old state
-# main.set_rsid	b:b	Sets the RSID state. Returns the old state
-# mmain.set_txid	b:b	Sets the TxRSID state. Returns the old state
-# main.set_squelch	b:b	Sets the squelch state. Returns the old state
-# main.set_squelch_level	d:d	Sets the squelch level. Returns the old level
-# main.set_wf_sideband	n:s	Sets the waterfall sideband to USB or LSB
-# main.toggle_afc	b:n	Toggles the AFC state. Returns the new state
-# main.toggle_lock	b:n	Toggles the Transmit Lock state. Returns the new state
-# main.toggle_reverse	b:n	Toggles the Reverse Sideband state. Returns the new state
-# main.toggle_rsid	b:n	Toggles the RSID state. Returns the new state
-# main.toggle_txid	b:n	Toggles the TxRSID state. Returns the new state
-# main.toggle_squelch	b:n	Toggles the squelch state. Returns the new state
-# main.tune	n:n	Tunes
-# main.tx	n:n	Transmits
+    def set_afc(self, new_state: bool) -> bool:
+        '''Sets the AFC state
+
+        @param new_state(bool): the new AFC state
+        @return (bool): the old state
+        '''
+        return self.client.main.set_afc(new_state)
+
+    def set_frequency(self, new_frequency: float) -> float:
+        '''Sets the RF carrier frequency
+
+        @param new_state(float): the new frequency
+        @return (bool): the old frequency
+        '''
+        return self.client.main.set_frequency(new_frequency)
+
+    def set_lock(self, new_state: bool) -> bool:
+        '''Sets the Transmit Lock state
+
+        @param new_state(bool): the new Transmit lock state
+        @return (bool): the old state
+        '''
+        return self.client.main.set_lock(new_state)
+    
+    def set_reverse(self, new_state: bool) -> bool:
+        '''Sets the reverse sideband state
+
+        @param new_state(bool): the new reverse sideband
+        @return (bool): the old state
+        '''
+        return self.client.main.set_reverse(new_state)
+    
+    def set_rsid(self, new_state: bool) -> bool:
+        '''Sets the RSID state
+
+        @param new_state(bool): the new RSID state
+        @return (bool): the old state
+        '''
+        return self.client.main.set_rsid(new_state)
+    
+    def set_txid(self, new_state: bool) -> bool:
+        '''Sets the TxRSID state
+
+        @param new_state(bool): the new TxRSID state
+        @return (bool): the old state
+        '''
+        return self.client.main.set_txid(new_state)
+    
+    def set_squelch(self, new_state: bool) -> bool:
+        '''Sets the Squelch state
+
+        @param new_state(bool): the new squelch state
+        @return (bool): the old state
+        '''
+        return self.client.main.set_squelch(new_state)
+    
+    def set_squelch_level(self, new_level: float) -> float:
+        '''Sets the Squelch level
+
+        @param new_level(float): the new squelch level
+        @return (float): the old level
+        '''
+        return self.client.main.set_squelch_level(new_level)
+    
+    def set_wf_sideband(self, new_sideband: str) -> None:
+        '''Sets the waterfall sideband to USB or LSB
+
+        @param new_sideband(float): the new squelch level
+        '''
+        self.client.main.set_wf_sideband(new_sideband)
+
+    def toggle_afc(self) -> bool:
+        '''Toggles the AFC state
+
+        @return (bool): the new state
+        '''
+        return self.client.main.toggle_afc()
+    
+    def toggle_lock(self) -> bool:
+        '''Toggles the Transmit Lock state
+
+        @return (bool): the new state
+        '''
+        return self.client.main.toggle_lock()
+    
+    def toggle_reverse(self) -> bool:
+        '''Toggles the Reverse Sideband state
+
+        @return (bool): the new state
+        '''
+        return self.client.main.toggle_reverse()
+    
+    def toggle_rsid(self) -> bool:
+        '''Toggles the RSID state
+
+        @return (bool): the new state
+        '''
+        return self.client.main.toggle_rsid()
+    
+    def toggle_txid(self) -> bool:
+        '''Toggles the TxRSID state
+
+        @return (bool): the new state
+        '''
+        return self.client.main.toggle_txid()
+    
+    def toggle_squelch(self) -> bool:
+        '''Toggles the squelch state
+
+        @return (bool): the new state
+        '''
+        return self.client.main.toggle_squelch()
+    
+    def tune(self) -> None:
+        '''Tunes'''
+        self.client.main.tune()
+
+    def tx(self) -> None:
+        '''Puts the Fldigi into transmit mode'''
+        self.client.main.tx()

@@ -154,35 +154,35 @@ class Log:
         '''
         return self.client.log.get_time_on()
     
-    def set_call(self, call_str) -> None:
+    def set_call(self, call_str: str) -> None:
         '''Sets the call field contents
         
         @param call_str(str): the string to populate in the call field
         '''
         self.client.log.set_call(call_str)
     
-    def set_exchange(self, exchange_str) -> None:
+    def set_exchange(self, exchange_str: str) -> None:
         '''Sets the contest exchange field contents
         
         @param exchange_str(str): the string to populate in the contest exchange field
         '''
         self.client.log.set_exchange(exchange_str)
 
-    def set_locator(self, locator_str) -> None:
+    def set_locator(self, locator_str: str) -> None:
         '''Sets the locator field contents
         
         @param locator_str(str): the string to populate in the locator field
         '''
         self.client.log.set_locator(locator_str)
     
-    def set_name(self, name_str) -> None:
+    def set_name(self, name_str: str) -> None:
         '''Sets the name field contents
         
         @param name_str(str): the string to populate in the name field
         '''
         self.client.log.set_name(name_str)
 
-    def set_name(self, name_str) -> None:
+    def set_name(self, name_str: str) -> None:
         '''Sets the name field contents
         
         @param name_str(str): the string to populate in the name field
@@ -203,14 +203,14 @@ class Log:
         '''
         self.client.log.set_rst_in(rst_in_str)
     
-    def set_rst_out(self, rst_out_str) -> None:
+    def set_rst_out(self, rst_out_str: str) -> None:
         '''Sets the RST(s) field contents
         
         @param rst_out_str(str): the string to populate in the RST(s) field
         '''
         self.client.log.set_rst_out(rst_out_str)
 
-    def set_serial_number(self, serial_number_str) -> None:
+    def set_serial_number(self, serial_number_str: str) -> None:
         '''Sets the serial number field contents
         
         @param serial_number_str(str): the string to populate in the serial number field
