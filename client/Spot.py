@@ -18,22 +18,39 @@ class Spot:
     Example use:
     >>> import pyfldm
     >>> client = pyfldm.Client()
-    >>> client.spot.
-    
+    >>> client.spot.toggle_auto()
+    True
     '''
     def __init__(self, client: ServerProxy) -> None:
         self.client = client
 
-    def get_bandwidth(self) -> str:
-        '''Gets the name of the current transceiver bandwidth
+    def get_auto(self) -> bool:
+        '''Gets the autospotter state
         
-        @return (str): the bandwidth name
+        @return (bool): the autospotter state
         '''
-        return self.client.rig.get_bandwidth()
+        return self.client.spot.get_auto()
     
-# spot.get_auto	b:n	Returns the autospotter state
-# spot.pskrep.get_count	i:n	Returns the number of callsigns spotted in the current session
-# spot.set_auto	n:b	Sets the autospotter state. Returns the old state
-# spot.toggle_auto	n:b	Toggles the autospotter state. Returns the new state
+    def get_pskrep_count(self) -> int:
+        '''Gets the number of callsigns spotted in the current session
+        
+        @return (int): the number of callsigns
+        '''
+        return self.client.spot.pskrep.get_count()
+    
+    def set_auto(self, new_state: bool) -> bool:
+        '''Sets the autospotter state
+        
+        @param new_state(bool): the new autospotter state
+        @return (bool): the old state
+        '''
+        return self.client.spot.set_auto(new_state)
+    
+    def toggle_auto(self) -> bool:
+        '''Toggles the autospotter state
+        
+        @return (bool): the new state
+        '''
+        return self.client.spot.toggle_auto()
     
     

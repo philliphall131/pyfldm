@@ -24,20 +24,69 @@ class Wefax:
     def __init__(self, client: ServerProxy) -> None:
         self.client = client
 
-    def get_bandwidth(self) -> str:
-        '''Gets the name of the current transceiver bandwidth
+    def end_reception(self) -> str:
+        '''End Wefax image reception
         
-        @return (str): the bandwidth name
+        @return (str): success message
         '''
-        return self.client.rig.get_bandwidth()
-
-# wefax.end_reception	s:n	End Wefax image reception
-# wefax.get_received_file	s:i	Waits for next received fax file, returns its name with
-# a delay. Empty string if timeout.
-# wefax.send_file	s:i	Send file. returns an empty string if OK otherwise an error message.
-# wefax.set_adif_log	s:b	Set/reset logging to received/transmit images to ADIF log file
-# wefax.set_max_lines	s:i	Set maximum lines for fax image reception
-# wefax.set_tx_abort_flag	s:n	Cancels Wefax image transmission
-# wefax.skip_apt	s:n	Skip APT during Wefax reception
-# wefax.skip_phasing	s:n	Skip phasing during Wefax reception
-# wefax.state_string	s:n	Returns Wefax engine state (tx and rx) for information.
+        return self.client.wefax.end_reception()
+    
+    def get_received_file(self, max_delay_secs: int) -> str:
+        '''Waits for next received fax file
+        
+        @param max_delay_secs(int): the max time in seconds to wait
+        @return (str): success message, empty string if timeout
+        '''
+        return self.client.wefax.get_received_file(max_delay_secs)
+    
+    def send_file(self, max_delay_secs: int) -> str:
+        '''Sends file
+        
+        @param max_delay_secs(int): the max time in seconds to wait
+        @return (str): empty string if successful send, error message otherwise
+        '''
+        return self.client.wefax.send_file(max_delay_secs)
+    
+    def set_adif_log(self, reset: bool = False) -> str:
+        '''Set/reset logging to received/transmit images to ADIF log file
+        
+        @param max_delay_secs(int): the max time in seconds to wait
+        @return (str): empty string if successful send, error message otherwise
+        '''
+        return self.client.wefax.set_adif_log()
+    
+    def set_max_lines(self, max_lines: int) -> str:
+        '''Set maximum lines for fax image reception
+        
+        @param max_lines(int): the max lines to set
+        @return (str): empty string if successful send, error message otherwise
+        '''
+        return self.client.wefax.set_max_lines()
+    
+    def set_tx_abort_flag(self) -> str:
+        '''Cancels Wefax image transmission
+        
+        @return (str): empty string if successful send, error message otherwise
+        '''
+        return self.client.wefax.set_tx_abort_flag()
+    
+    def skip_apt(self) -> str:
+        '''Skip APT during Wefax reception
+        
+        @return (str): empty string if successful send, error message otherwise
+        '''
+        return self.client.wefax.skip_apt()
+    
+    def skip_phasing(self) -> str:
+        '''Skip phasing during Wefax reception
+        
+        @return (str): empty string if successful send, error message otherwise
+        '''
+        return self.client.wefax.skip_phasing()
+    
+    def state_string(self) -> str:
+        '''Gets the Wefax engine state (tx and rx) for information.
+        
+        @return (str): the engine state information
+        '''
+        return self.client.wefax.state_string()

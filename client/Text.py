@@ -18,22 +18,67 @@ class Text:
     Example use:
     >>> import pyfldm
     >>> client = pyfldm.Client()
-    >>> client.text.
-    
+    >>> client.text.get_rx(1,2)
+    AB
     '''
     def __init__(self, client: ServerProxy) -> None:
         self.client = client
 
-    def get_bandwidth(self) -> str:
-        '''Gets the name of the current transceiver bandwidth
+    def get_rx_data(self) -> bytes:
+        '''Gets all RX data received since last query
         
-        @return (str): the bandwidth name
+        @return (bytes): the data since last query
         '''
-        return self.client.rig.get_bandwidth()
+        return self.client.rx.get_data()
     
-# text.add_tx	n:s	Adds a string to the TX text widget
-# text.add_tx_bytes	n:6	Adds a byte string to the TX text widget
-# text.clear_rx	n:n	Clears the RX text widget
-# text.clear_tx	n:n	Clears the TX text widget
-# text.get_rx	6:i	Returns a range of characters (start, length) from the RX text widget
-# text.get_rx_length	i:n	Returns the number of characters in the RX widget
+    def get_rxtx_data(self) -> bytes:
+        '''Gets all RXTX combined data since last query
+        
+        @return (bytes): the data since last query
+        '''
+        return self.client.rxtx.get_data()
+    
+    def get_tx_data(self) -> bytes:
+        '''Gets all TX data received since last query
+        
+        @return (bytes): the data since last query
+        '''
+        return self.client.tx.get_data()
+    
+    def add_tx(self, text) -> None:
+        '''Adds a string to the TX text widget
+        
+        @param text(str): the text to add to the TX widget
+        '''
+        self.client.text.add_tx(text)
+
+    def add_tx_bytes(self, byte_str: bytes) -> None:
+        '''Adds a byte string to the TX text widget
+        
+        @param byte_str(str): the byte string to add to the TX widget
+        '''
+        self.client.text.add_tx_bytes(byte_str)
+
+    def clear_rx(self) -> None:
+        '''Clears the RX text widget'''
+        self.client.text.clear_rx()
+
+    def clear_tx(self) -> None:
+        '''Clears the TX text widget'''
+        self.client.text.clear_tx()
+
+    def get_rx(self, start: int, length: int) -> bytes:
+        '''Gets a range of characters (start, length) from the RX text widget
+        
+        @param start(int): the index of the starting character
+        @param length(int): the number of characters to get
+        @return (bytes): the requested range of characters in a byte string
+        '''
+        self.client.text.get_rx(start, length)
+
+    def get_rx_length(self) -> int:
+        '''Gets the number of characters in the RX widget
+        
+        @return (int): the number of characters in the RX widget
+        '''
+        self.client.text.get_rx_length()
