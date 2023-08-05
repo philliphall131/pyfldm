@@ -1,1 +1,4 @@
 __pycache__/
+venv/
+sandbox.py
+pyfldm.egg-info/
