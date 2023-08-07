@@ -20,9 +20,13 @@
 #
 ############################################################################
 
+import logging
 from xmlrpc.client import ServerProxy
+from .BaseCall import BaseCall
 
-class Rig:
+logger = logging.getLogger(__name__)
+
+class Rig(BaseCall):
     '''Houses the commands in the rig group in the XML-RPC spec for fldigi.
     Reference: http://www.w1hkj.com/FldigiHelp/xmlrpc_control_page.html
 
@@ -38,6 +42,9 @@ class Rig:
     '''
     def __init__(self, client: ServerProxy) -> None:
         self.client = client
+    
+    def __str__(self) -> str:
+        return __name__.lower().split(".")[-1]
 
     def get_bandwidth(self) -> str:
         '''Gets the name of the current transceiver bandwidth

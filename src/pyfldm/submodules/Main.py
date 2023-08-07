@@ -20,9 +20,13 @@
 #
 ############################################################################
 
+import logging
 from xmlrpc.client import ServerProxy
+from .BaseCall import BaseCall
 
-class Main:
+logger = logging.getLogger(__name__)
+
+class Main(BaseCall):
     '''Houses the commands in the main group in the XML-RPC spec for fldigi.
     Reference: http://www.w1hkj.com/FldigiHelp/xmlrpc_control_page.html
 
@@ -38,6 +42,9 @@ class Main:
     '''
     def __init__(self, client: ServerProxy) -> None:
         self.client = client
+    
+    def __str__(self) -> str:
+        return __name__.lower().split(".")[-1]
 
     def abort(self) -> None:
         '''Aborts a transmit or tune'''

@@ -22,19 +22,22 @@
 
 import sys
 import subprocess
-import xmlrpc.client
-from .submodules.Logger import logger
+import logging
 from time import time, sleep
+from .Client import Client
+
+logger = logging.getLogger(__name__)
 
 MAX_STARTUP_DELAY_SECS = 5
 MAX_SHUTDOWN_DELAY_SECS = 5
 
 class AppMonitor:
 
-    ''' ApplicationMonitor manages the running of Fldigi
+    ''' ApplicationMonitor manages the running of Fldigi. 
+    Launches, monitors, and terminates the Fldigi process, using python subprocess.Popen
 
-    @brief: Launches, monitors, and terminates the Fldigi process, using python subprocess.Popen
-    
+    @param hostname(str): the IP address of the xmlrpc server for Fldigi to establish
+    @param port(int): the port number of the xmlrpc server connection
     '''
 
     def __init__(self, hostname='127.0.0.1', port=7362) -> None:
@@ -42,7 +45,7 @@ class AppMonitor:
         self.process = None
         self.hostname = hostname
         self.port = int(port)
-        self._client = xmlrpc.client.ServerProxy(f'http://{self.hostname}:{self.port}/')
+        self._client = Client(hostname, port)
 
         # log platform
         if self.platform == 'darwin':
@@ -97,13 +100,13 @@ class AppMonitor:
     def start(self) -> int:
         # check if application already running
         if self.is_running():
-            logger.warning("Fldigi is already running. Shut down all instances of Fldigi before using AppMonitor")
+            logger.warning("Fldigi is already running. Shut down all instances of Fldigi before using AppMonitor.start()")
             return 0
         logger.info("Starting Fldigi")
 
-        addl_args = ['--arq-server-address', 
+        addl_args = ['--xmlrpc-server-address', 
                      self.hostname, 
-                     '--arq-server-port', 
+                     '--xmlrpc-server-port', 
                      str(self.port)]
 
         if self.platform == 'darwin':
@@ -113,8 +116,10 @@ class AppMonitor:
             process2 = subprocess.check_output(['grep', 'fldigi'], stdin=process1.stdout)
             app_name = process2.decode().strip()
             # start the application
-            startup_args = ['open', '-a', f'{app_name}'] + addl_args
+            startup_args = ['open', '-a', f'{app_name}', '--args'] + addl_args
             self.process = subprocess.Popen(startup_args)
+            sleep(2)
+
         
         elif self.platform == 'win32':
             # start with windows

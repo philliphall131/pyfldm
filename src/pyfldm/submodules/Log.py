@@ -20,9 +20,13 @@
 #
 ############################################################################
 
+import logging
 from xmlrpc.client import ServerProxy
+from .BaseCall import BaseCall
 
-class Log:
+logger = logging.getLogger(__name__)
+
+class Log(BaseCall):
     '''Houses the commands in the log group in the XML-RPC spec for fldigi.
     Reference: http://www.w1hkj.com/FldigiHelp/xmlrpc_control_page.html
 
@@ -38,6 +42,9 @@ class Log:
     '''
     def __init__(self, client: ServerProxy) -> None:
         self.client = client
+    
+    def __str__(self) -> str:
+        return f'log'
 
     def clear(self) -> None:
         '''Clears the contents of the log fields'''

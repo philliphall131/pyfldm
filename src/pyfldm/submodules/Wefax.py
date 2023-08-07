@@ -20,9 +20,13 @@
 #
 ############################################################################
 
+import logging
 from xmlrpc.client import ServerProxy
+from .BaseCall import BaseCall
 
-class Wefax:
+logger = logging.getLogger(__name__)
+
+class Wefax(BaseCall):
     '''Houses the commands in the wefax group in the XML-RPC spec for fldigi.
     Reference: http://www.w1hkj.com/FldigiHelp/xmlrpc_control_page.html
 
@@ -38,6 +42,9 @@ class Wefax:
     '''
     def __init__(self, client: ServerProxy) -> None:
         self.client = client
+    
+    def __str__(self) -> str:
+        return __name__.lower().split(".")[-1]
 
     def end_reception(self) -> str:
         '''End Wefax image reception

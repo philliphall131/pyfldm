@@ -2,7 +2,7 @@
 ## Python Fast Light Digital Modem
 A library to be used for interacting with and controlling the Fldigi application. 
 
-Can be used to control the application directly via python library, such as to start, stop, and monitor the runnin status. But the primary usage is in serving as an api to Fldigi via xmlrpc
+Can be used to control the application directly via python library, such as to start, stop, and monitor the running status. But the primary usage is in serving as an api to Fldigi via xmlrpc
 
 Example uses:
 1. Controlling the Application (start, stop, status)

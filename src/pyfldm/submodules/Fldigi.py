@@ -19,10 +19,13 @@
 #  USA
 #
 ############################################################################
-
+import logging
 from xmlrpc.client import ServerProxy
+from .BaseCall import BaseCall
 
-class Fldigi:
+logger = logging.getLogger(__name__)
+
+class Fldigi(BaseCall):
     '''Houses the commands in the fldigi group in the XML-RPC spec for fldigi.
     Reference: http://www.w1hkj.com/FldigiHelp/xmlrpc_control_page.html
 
@@ -38,7 +41,10 @@ class Fldigi:
     '''
     def __init__(self, client: ServerProxy) -> None:
         self.client = client
-
+    
+    def __str__(self) -> str:
+        return __name__.lower().split(".")[-1]
+        
     def name(self) -> str:
         '''Get the program name
 

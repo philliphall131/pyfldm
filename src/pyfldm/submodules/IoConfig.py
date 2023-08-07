@@ -20,9 +20,13 @@
 #
 ############################################################################
 
+import logging
 from xmlrpc.client import ServerProxy
+from .BaseCall import BaseCall
 
-class IoConfig:
+logger = logging.getLogger(__name__)
+
+class IoConfig(BaseCall):
     '''Houses the commands in the io group in the XML-RPC spec for fldigi.
     Reference: http://www.w1hkj.com/FldigiHelp/xmlrpc_control_page.html
 
@@ -39,7 +43,8 @@ class IoConfig:
     def __init__(self, client: ServerProxy) -> None:
         self.client = client
 
-# io.in_use	s:n	Returns the IO port in use (ARQ/KISS).
+    def __str__(self) -> str:
+        return __name__.lower().split(".")[-1]
 
     def enable_arq(self) -> None:
         '''Switch to ARQ I/O'''

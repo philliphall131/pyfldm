@@ -20,9 +20,13 @@
 #
 ############################################################################
 
+import logging
 from xmlrpc.client import ServerProxy
+from .BaseCall import BaseCall
 
-class Navtex:
+logger = logging.getLogger(__name__)
+
+class Navtex(BaseCall):
     '''Houses the commands in the navtex group in the XML-RPC spec for fldigi.
     Reference: http://www.w1hkj.com/FldigiHelp/xmlrpc_control_page.html
 
@@ -38,6 +42,9 @@ class Navtex:
     '''
     def __init__(self, client: ServerProxy) -> None:
         self.client = client
+
+    def __str__(self) -> str:
+        return __name__.lower().split(".")[-1]
 
     def get_message(self, max_delay_secs: int) -> str:
         '''Gets the next Navtex/SitorB message

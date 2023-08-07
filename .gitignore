@@ -2,3 +2,5 @@ __pycache__/
 venv/
 sandbox.py
 pyfldm.egg-info/
+dist/
+.DS_Store

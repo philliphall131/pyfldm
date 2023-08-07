@@ -20,6 +20,7 @@
 #
 ############################################################################
 
+import logging
 import xmlrpc.client
 from .submodules.Fldigi import Fldigi
 from .submodules.IoConfig import IoConfig
@@ -31,7 +32,18 @@ from .submodules.Spot import Spot
 from .submodules.Text import Text
 from .submodules.Wefax import Wefax
 
+logger = logging.getLogger(__name__)
+
 class Client:
+
+    ''' Client serves as the client side connection to Fldigi via the xmlrpc API. 
+    This is the main worker for the pyfldm library and facilitates all the xmlrpx 
+    calls available to Fldigi
+
+    @param hostname(str): the IP address of the xmlrpc server to connect to
+    @param port(int): the port number of the xmlrpc server connection
+    '''
+
     def __init__(self, hostname='127.0.0.1', port=7362) -> None:
         self.hostname = hostname
         self.port = port
@@ -46,16 +58,40 @@ class Client:
         self.spot = Spot(self.client)
         self.text = Text(self.client)
         self.wefax = Wefax(self.client)
+        self._sub_clients = [
+            self.fldigi,
+            self.io,
+            self.main,
+            self.modem,
+            self.navtex,
+            self.rig,
+            self.spot,
+            self.text,
+            self.wefax
+        ]
 
-    @property
-    def methods(self):
+        logger.info(f"Started Fldigi client on {hostname}:{port}")
+
+    def get_all_methods(self) -> list:
         '''Returns the list of commands in which can be used to command Fldigi via the xmlrpc interface
+        Formatted as a list containing a dict entry for each client namespace, for example:
+        
+        [ {'fldigi': [<fldigi methods>]}, ... ]
 
         @return (list): the list of pyfldm commands corresponding to fldigi xmlrpc commands
         '''
-        # TODO: refine to show actual python methods
-        return "List of PyFldm methods"
-        #return self.client.fldigi.list()
+        methods_list = []
+        for sub in self._sub_clients:
+            methods_list.append({
+                sub.__str__(): sub.get_methods()
+            })
+        return methods_list
+    
+    def print_all_methods(self) -> None:
+        '''Prints the list of commands in which can be used to command Fldigi via the xmlrpc interface'''
+        
+        for sub in self._sub_clients:
+            sub.print_methods()
 
 
     
