@@ -1,8 +1,16 @@
 # PyFLDM
+
+*** CAUTION: Current Release Notes: v0.x.x are very rough and untested. Version 1.0 still in development, tentative release date Sep2023. All current functionality being actively developed and tested. AppMonitor not compatible with Windows OS ***
+
 ## Python Fast Light Digital Modem
 A library to be used for interacting with and controlling the Fldigi application. 
 
 Can be used to control the application directly via python library, such as to start, stop, and monitor the running status. But the primary usage is in serving as an api to Fldigi via xmlrpc
+
+## Installation
+pip install pyfldm
+
+## Using pyfldm
 
 Example uses:
 1. Controlling the Application (start, stop, status)
@@ -32,3 +40,8 @@ False
 4.1.26
 
 ```
+## Upcoming Features in v.1.0.0
+* Fully tested endpoints for every Fldigi xmlrpc call
+* Helpers to print or obtain the equivalent python calls for each namespace group
+* Better documentation
+* Support for Windows OS
