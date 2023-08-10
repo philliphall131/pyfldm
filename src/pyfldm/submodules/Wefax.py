@@ -35,10 +35,10 @@ class Wefax(BaseCall):
     @param client(xmlrpc.client.ServerProxy): a ServerProxy client object used to make http requests via the fldigi xmlrpc api
     
     Example use:
-    >>> import pyfldm
-    >>> client = pyfldm.Client()
-    >>> client.wefax.
-    
+    >>> from pyfldm import Client
+    >>> client = Client()
+    >>> client.wefax.end_reception()
+    "Success"
     '''
     def __init__(self, client: ServerProxy) -> None:
         self.client = client

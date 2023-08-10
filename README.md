@@ -7,8 +7,8 @@ Can be used to control the application directly via python library, such as to s
 Example uses:
 1. Controlling the Application (start, stop, status)
 ```
->>> import pyfldm
->>> app = pyfldm.AppMonitor()
+>>> from pyfldm import AppMonitor
+>>> app = AppMonitor()
 >>> app.start()
 >>> # wait a few seconds for Fldigi to start up
 >>> app.is_running() # checks that Fldigi is a currently running process
@@ -26,8 +26,8 @@ False
 2. Using the XMLRPC API
 ```
 # * assuming that Fldigi is already running
->>> import pyfldm
->>> client = pyfldm.Client()
+>>> from pyfldm import Client
+>>> client = Client()
 >>> client.fldigi.version()
 4.1.26
 

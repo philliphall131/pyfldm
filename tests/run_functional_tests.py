@@ -13,19 +13,9 @@ from pyfldm.Client import Client
 
 # logger.addHandler(console_handler)
 
-# a = AppMonitor()
-# a.start()
-client = Client()
-print()
-for entry in client.get_all_methods():
-    print(entry)
+from functional_tests.TestText import TestText
 
-# print(client.fldigi.test_call())
-
-# try:
-#     from pyfldm import Client
-# except:
-#     print('Cannot import pyfldm. Ensure it is installed')
-#     sys.exit(1)
+test_case1 = TestText()
+test_case1.run_all_tests()
 
 

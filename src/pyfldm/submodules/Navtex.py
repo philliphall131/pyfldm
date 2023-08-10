@@ -35,8 +35,8 @@ class Navtex(BaseCall):
     @param client(xmlrpc.client.ServerProxy): a ServerProxy client object used to make http requests via the fldigi xmlrpc api
     
     Example use:
-    >>> import pyfldm
-    >>> client = pyfldm.Client()
+    >>> from pyfldm import Client
+    >>> client = Client()
     >>> client.navtex.get_message()
     ABCD
     '''
