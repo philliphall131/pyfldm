@@ -38,6 +38,20 @@ class AppMonitor:
 
     @param hostname(str): the IP address of the xmlrpc server for Fldigi to establish
     @param port(int): the port number of the xmlrpc server connection
+
+    >>> from pyfldm.AppMonitor import AppMonitor
+    >>> app = AppMonitor()
+    >>> app.start()
+    >>> # wait a few seconds for Fldigi to start up
+    >>> app.is_running() # checks that Fldigi is a currently running process
+    True
+    >>> app.is_functional() # verifies that the xmlrpc interface is responsive
+    True
+    >>> result = app.stop() # asks fldigi to gracefully shut down, returns a 0 if successfully stopped, 1 if not
+    >>> if not result:
+    ...     app.kill()  # forcibly kills the process
+    >>> app.is_running()
+    False
     '''
 
     def __init__(self, hostname='127.0.0.1', port=7362) -> None:

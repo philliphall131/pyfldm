@@ -35,7 +35,7 @@ class Modem(BaseCall):
     @param client(xmlrpc.client.ServerProxy): a ServerProxy client object used to make http requests via the fldigi xmlrpc api
     
     Example use:
-    >>> from pyfldm import Client
+    >>> from pyfldm.Client import Client
     >>> client = Client()
     >>> client.modem.get_carrier()
     1234
