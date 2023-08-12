@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyfldm"
-version = "0.0.3"
+version = "0.0.4"
 authors = [
   { name="Phillip Hall", email="phall131@pm.me" },
 ]
