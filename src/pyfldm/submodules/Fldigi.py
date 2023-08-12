@@ -99,5 +99,5 @@ class Fldigi(BaseCall):
         @param save_log(bool): True to save log; False otherwise
         @param save_macros(bool): True to save macros; False otherwise
         '''
-        bitmask = int(f'0b{int(save_macros)}{int(save_log)}{int(save_options)}')
+        bitmask = int(f'{int(save_macros)}{int(save_log)}{int(save_options)}', 2)
         self.client.fldigi.terminate(bitmask)
