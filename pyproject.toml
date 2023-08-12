@@ -16,6 +16,9 @@ classifiers = [
     "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
     "Operating System :: OS Independent",
 ]
+dependencies = [
+    "psutil >= 5.9.5",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/philliphall131/pyfldm"
