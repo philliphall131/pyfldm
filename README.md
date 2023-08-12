@@ -1,6 +1,8 @@
 # PyFLDM
 
-*** CAUTION: Current Release Notes: v0.x.x are very rough and untested. Version 1.0 still in development, tentative release date Sep2023. All current functionality being actively developed and tested. AppMonitor not compatible with Windows OS ***
+*** v0.0.4 Release Notes: AppMonitor now compatible with Windows OS! ***
+
+*** CAUTION: All versions v0.x.y are very rough and untested. Version 1.0.0 still in development, tentative release date Sep2023. All current functionality being actively developed and tested. ***
 
 ## Python Fast Light Digital Modem
 A library to be used for interacting with and controlling the Fldigi application. 
@@ -42,6 +44,4 @@ False
 ```
 ## Upcoming Features in v.1.0.0
 * Fully tested endpoints for every Fldigi xmlrpc call
-* Helpers to print or obtain the equivalent python calls for each namespace group
 * Better documentation
-* Support for Windows OS
