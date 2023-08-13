@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 class BaseTestCase:
     def __init__(self) -> None:
         self.passing = 0
+        self.name = self.__module__.split('.')[-1]
 
     def setup(self) -> None:
         pass
@@ -25,8 +26,7 @@ class BaseTestCase:
         return len(test_methods)
 
     def run_all_tests(self) -> None:
-        name = self.__module__.split('.')[-1]
-        self.init_logs(name)
+        self.init_logs()
         # gather up all the tests and run them
         test_methods = [func for func in self.__dir__() if 
                         func.startswith("test_")]
@@ -35,25 +35,40 @@ class BaseTestCase:
         
         for test in test_methods:
             test_func = getattr(self, test)
-            self.each_setup()
-            try:
-                test_func()
-                self.passing += 1
-                logger.info(f'{name}:{test}   {PrintColors.GREEN}PASS{PrintColors.ENDC}')
-            except AssertionError:
-                logger.exception(f'{name}:{test}   {PrintColors.RED}FAIL{PrintColors.ENDC}')
-                logger.info("")
-            except:
-                logger.exception(f'{name}:{test}   {PrintColors.RED}ERROR{PrintColors.ENDC}')
-                logger.info("")
-            self.each_cleanup()
+            self.run_test(test_func)
 
         self.cleanup()
-        self.finish_logs(name)
+        self.finish_logs()
         return self.passing
     
-    def init_logs(self, name):
-        logger.info(f'\n{PrintColors.PURPLE}======================== {name} Starting ========================{PrintColors.ENDC}')
+    def run_one_test(self, func):
+        self.name += f'.{func.__name__}'
+        self.init_logs()
+        self.setup()
+        
+        self.run_test(func)
+
+        self.cleanup()
+        self.finish_logs()
+        return self.passing
     
-    def finish_logs(self, name):
-        logger.info(f'\n{PrintColors.PURPLE}======================== {name} Finished ========================{PrintColors.ENDC}')
+    def run_test(self, func):
+        self.each_setup()
+        try:
+            func()
+            self.passing += 1
+            logger.info(f'{self.name}:{func.__name__}   {PrintColors.GREEN}PASS{PrintColors.ENDC}')
+        except AssertionError:
+            logger.exception(f'{self.name}:{func.__name__}   {PrintColors.RED}FAIL{PrintColors.ENDC}')
+            logger.info("")
+        except:
+            logger.exception(f'{self.name}:{func.__name__}   {PrintColors.RED}ERROR{PrintColors.ENDC}')
+            logger.info("")
+        self.each_cleanup()
+
+    
+    def init_logs(self):
+        logger.info(f'\n{PrintColors.PURPLE}======================== {self.name} Starting ========================{PrintColors.ENDC}')
+    
+    def finish_logs(self):
+        logger.info(f'\n{PrintColors.PURPLE}======================== {self.name} Finished ========================{PrintColors.ENDC}')

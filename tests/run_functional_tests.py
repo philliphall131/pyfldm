@@ -4,4 +4,7 @@ from functional_tests.TestText import TestText
 text_case = TestText()
 
 tester = TestRunner()
-tester.run([text_case])
+# tester.run([text_case])
+# tester.run(text_case)
+tester.run(text_case.test_app_start)
+

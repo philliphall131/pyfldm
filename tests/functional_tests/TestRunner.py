@@ -1,4 +1,6 @@
 import logging
+from importlib import import_module
+from .BaseTestCase import BaseTestCase
 from utilities.utilities import PrintColors
 
 class TestRunner:
@@ -28,13 +30,24 @@ class TestRunner:
         return testing_logger
 
     def run(self, tests):
-        for test in tests:
-            self.total_tests += test.count_tests()
-
-        self._init_test_logs()
-
-        for test in tests:
-            self.passing_tests += test.run_all_tests()
+        if isinstance(tests, list):
+            for test in tests:
+                self.total_tests += test.count_tests()
+            self._init_test_logs()
+            for test in tests:
+                self.passing_tests += test.run_all_tests()
+        elif isinstance(tests, BaseTestCase):
+            self.total_tests += tests.count_tests()
+            self._init_test_logs()
+            self.passing_tests += tests.run_all_tests()
+        elif callable(tests):
+            self.total_tests = 1
+            self._init_test_logs()
+            cls_name = tests.__qualname__.split('.')[0]
+            m = import_module('.' + cls_name, 'functional_tests')
+            cls_impl = getattr(m, cls_name)
+            c = cls_impl()
+            c.run_one_test(tests)
         
         self._finish_test_logs()
 
