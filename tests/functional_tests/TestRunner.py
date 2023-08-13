@@ -1,33 +1,57 @@
+import os
+import re
 import logging
+import shutil
+from datetime import datetime
 from importlib import import_module
 from .BaseTestCase import BaseTestCase
-from utilities.utilities import PrintColors
+from utilities.utilities import PrintColors, LogOption, PrintColorsRegex
+
+TEST_LOGS_DIR = "./test_logs"
 
 class TestRunner:
-    def __init__(self) -> None:
-        self.logger = self.init_loggers()
+    def __init__(self, log_option = 0) -> None:
         self.total_tests = 0
         self.passing_tests = 0
+        self.log_option = LogOption(log_option)
+        self.log_file = self.get_file_name()
+        self.logger = self.init_loggers()
 
     def init_loggers(self):
-        # init the pyfldm logger
-        pyfldm_logger = logging.getLogger('pyfldm')
-        pyfldm_logger.setLevel(logging.DEBUG)
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.DEBUG)
-        console_formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
-        console_handler.setFormatter(console_formatter)
-        pyfldm_logger.addHandler(console_handler)
-
         testing_logger = logging.getLogger('functional_tests')
         testing_logger.setLevel(logging.DEBUG)
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.DEBUG)
-        console_formatter = logging.Formatter('%(message)s')
-        console_handler.setFormatter(console_formatter)
-        testing_logger.addHandler(console_handler)
+        pyfldm_logger = logging.getLogger('pyfldm')
+        pyfldm_logger.setLevel(logging.DEBUG)
+
+        if self.log_option in [LogOption.CONSOLE_ONLY, LogOption.BOTH]:   
+            console_handler = logging.StreamHandler()
+            console_handler.setLevel(logging.DEBUG)
+            console_formatter = logging.Formatter('%(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s')
+            console_handler.setFormatter(console_formatter)
+            pyfldm_logger.addHandler(console_handler)
+
+            console_formatter = logging.Formatter('%(message)s')
+            console_handler.setFormatter(console_formatter)
+            testing_logger.addHandler(console_handler)
+
+        if self.log_option in [LogOption.FILE_ONLY, LogOption.BOTH]:
+            if not os.path.isdir(TEST_LOGS_DIR):
+                os.mkdir(TEST_LOGS_DIR)
+            
+            file_handler = logging.FileHandler(f'{TEST_LOGS_DIR}/{self.log_file}')
+            file_handler.setLevel(logging.DEBUG)
+            console_formatter = logging.Formatter('%(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s')
+            file_handler.setFormatter(console_formatter)
+            pyfldm_logger.addHandler(file_handler)
+
+            console_formatter = logging.Formatter('%(message)s')
+            file_handler.setFormatter(console_formatter)
+            testing_logger.addHandler(file_handler)
 
         return testing_logger
+    
+    def get_file_name(self):
+        return datetime.now().strftime('%Y%m%d_%H%M%S_test_result.log')
 
     def run(self, tests):
         if isinstance(tests, list):
@@ -52,12 +76,31 @@ class TestRunner:
         self._finish_test_logs()
 
     def _init_test_logs(self):
-        self.logger.info(f'\n{PrintColors.GREEN}======================== Starting Test Session ========================{PrintColors.ENDC}')
+        self.logger.info(f'\n{PrintColors.GREEN.value}======================== Starting Test Session ========================{PrintColors.ENDC.value}')
         self.logger.info(f'Found {self.total_tests} tests\n')
     
     def _finish_test_logs(self):
-        self.logger.info(f'\n{PrintColors.YELLOW}========================     Test Results      ========================{PrintColors.ENDC}')
+        self.logger.info(f'\n{PrintColors.YELLOW.value}========================     Test Results      ========================{PrintColors.ENDC.value}')
         self.logger.info(f'\t Test Results: Passed: {self.passing_tests}, Failed: {self.total_tests-self.passing_tests}, Total: {self.total_tests}')
-        self.logger.info(f'{PrintColors.GREEN}======================== Test Session Finished ========================{PrintColors.ENDC}\n')
+        self.logger.info(f'{PrintColors.GREEN.value}======================== Test Session Finished ========================{PrintColors.ENDC.value}\n')
+
+        if self.log_option in [LogOption.FILE_ONLY, LogOption.BOTH]:
+            self._clean_log_file()
+    
+    def _clean_log_file(self):
+        if not os.path.isfile(f'{TEST_LOGS_DIR}/{self.log_file}'):
+            return
+        
+        with open(f'{TEST_LOGS_DIR}/{self.log_file}', 'r') as fin:
+            with open(f'{TEST_LOGS_DIR}/tmp.log', 'w') as fout:
+                for line in fin:
+                    for color in PrintColorsRegex:
+                        pattern = f'{color.value}'
+                        line = re.sub(pattern, "", line)
+                    fout.write(line)
+
+        
+        os.remove(f'{TEST_LOGS_DIR}/{self.log_file}')  
+        shutil.move(f'{TEST_LOGS_DIR}/tmp.log', f'{TEST_LOGS_DIR}/{self.log_file}')
     
         

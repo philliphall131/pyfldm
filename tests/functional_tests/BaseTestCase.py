@@ -57,18 +57,18 @@ class BaseTestCase:
         try:
             func()
             self.passing += 1
-            logger.info(f'{self.name}:{func.__name__}   {PrintColors.GREEN}PASS{PrintColors.ENDC}')
+            logger.info(f'{self.name}:{func.__name__}   {PrintColors.GREEN.value}PASS{PrintColors.ENDC.value}')
         except AssertionError:
-            logger.exception(f'{self.name}:{func.__name__}   {PrintColors.RED}FAIL{PrintColors.ENDC}')
+            logger.exception(f'{self.name}:{func.__name__}   {PrintColors.RED.value}FAIL{PrintColors.ENDC.value}')
             logger.info("")
         except:
-            logger.exception(f'{self.name}:{func.__name__}   {PrintColors.RED}ERROR{PrintColors.ENDC}')
+            logger.exception(f'{self.name}:{func.__name__}   {PrintColors.RED.value}ERROR{PrintColors.ENDC.value}')
             logger.info("")
         self.each_cleanup()
 
     
     def init_logs(self):
-        logger.info(f'\n{PrintColors.PURPLE}======================== {self.name} Starting ========================{PrintColors.ENDC}')
+        logger.info(f'\n{PrintColors.PURPLE.value}======================== {self.name} Starting ========================{PrintColors.ENDC.value}')
     
     def finish_logs(self):
-        logger.info(f'\n{PrintColors.PURPLE}======================== {self.name} Finished ========================{PrintColors.ENDC}')
+        logger.info(f'\n{PrintColors.PURPLE.value}======================== {self.name} Finished ========================{PrintColors.ENDC.value}')

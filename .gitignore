@@ -8,3 +8,5 @@ dist/
 release_process.txt
 archive/
 .pytest_cache/
+*.log
+test_logs/
