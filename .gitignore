@@ -6,3 +6,5 @@ dist/
 .DS_Store
 .vscode/
 release_process.txt
+archive/
+.pytest_cache/

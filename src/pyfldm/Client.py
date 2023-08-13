@@ -70,7 +70,7 @@ class Client:
             self.wefax
         ]
 
-        logger.info(f"Started Fldigi client on {hostname}:{port}")
+        logger.info(f"Setup Fldigi client on {hostname}:{port}")
 
     def get_all_methods(self) -> list:
         '''Returns the list of commands in which can be used to command Fldigi via the xmlrpc interface
