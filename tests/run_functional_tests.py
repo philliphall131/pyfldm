@@ -5,6 +5,5 @@ text_case = TestText()
 
 tester = TestRunner(2)
 tester.run([text_case])
-# tester.run(text_case)
-# tester.run(text_case.test_app_start)
+
 

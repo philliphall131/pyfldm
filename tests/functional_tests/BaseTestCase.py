@@ -30,14 +30,16 @@ class BaseTestCase:
         # gather up all the tests and run them
         test_methods = [func for func in self.__dir__() if 
                         func.startswith("test_")]
+        try:
+            self.setup()
+            
+            for test in test_methods:
+                test_func = getattr(self, test)
+                self.run_test(test_func)
 
-        self.setup()
-        
-        for test in test_methods:
-            test_func = getattr(self, test)
-            self.run_test(test_func)
-
-        self.cleanup()
+            self.cleanup()
+        except:
+            logger.error("Error in run_all_tests")
         self.finish_logs()
         return self.passing
     

@@ -24,29 +24,33 @@ class TestRunner:
         pyfldm_logger.setLevel(logging.DEBUG)
 
         if self.log_option in [LogOption.CONSOLE_ONLY, LogOption.BOTH]:   
-            console_handler = logging.StreamHandler()
-            console_handler.setLevel(logging.DEBUG)
-            console_formatter = logging.Formatter('%(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s')
-            console_handler.setFormatter(console_formatter)
-            pyfldm_logger.addHandler(console_handler)
+            console_handler1 = logging.StreamHandler()
+            console_handler1.setLevel(logging.DEBUG)
+            console_formatter1 = logging.Formatter('%(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s')
+            console_handler1.setFormatter(console_formatter1)
+            pyfldm_logger.addHandler(console_handler1)
 
-            console_formatter = logging.Formatter('%(message)s')
-            console_handler.setFormatter(console_formatter)
-            testing_logger.addHandler(console_handler)
+            console_handler2 = logging.StreamHandler()
+            console_handler2.setLevel(logging.DEBUG)
+            console_formatter2 = logging.Formatter('%(message)s')
+            console_handler2.setFormatter(console_formatter2)
+            testing_logger.addHandler(console_handler2)
 
         if self.log_option in [LogOption.FILE_ONLY, LogOption.BOTH]:
             if not os.path.isdir(TEST_LOGS_DIR):
                 os.mkdir(TEST_LOGS_DIR)
             
-            file_handler = logging.FileHandler(f'{TEST_LOGS_DIR}/{self.log_file}')
-            file_handler.setLevel(logging.DEBUG)
-            console_formatter = logging.Formatter('%(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s')
-            file_handler.setFormatter(console_formatter)
-            pyfldm_logger.addHandler(file_handler)
+            file_handler1 = logging.FileHandler(f'{TEST_LOGS_DIR}/{self.log_file}')
+            file_handler1.setLevel(logging.DEBUG)
+            file_formatter1 = logging.Formatter('%(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s')
+            file_handler1.setFormatter(file_formatter1)
+            pyfldm_logger.addHandler(file_handler1)
 
-            console_formatter = logging.Formatter('%(message)s')
-            file_handler.setFormatter(console_formatter)
-            testing_logger.addHandler(file_handler)
+            file_handler2 = logging.FileHandler(f'{TEST_LOGS_DIR}/{self.log_file}')
+            file_handler2.setLevel(logging.DEBUG)
+            file_formatter2 = logging.Formatter('%(message)s')
+            file_handler2.setFormatter(file_formatter2)
+            testing_logger.addHandler(file_handler2)
 
         return testing_logger
     
@@ -59,10 +63,19 @@ class TestRunner:
                 self.total_tests += test.count_tests()
             self._init_test_logs()
             for test in tests:
-                self.passing_tests += test.run_all_tests()
+                if not isinstance(test, BaseTestCase):
+                    self.logger.error(f"Cannot run {test}, not a child of BaseTestCase")
+                try:
+                    self.passing_tests += test.run_all_tests()
+                except:
+                    self.logger.exception(f'Failed while running: {test}')
         elif isinstance(tests, BaseTestCase):
             self.total_tests += tests.count_tests()
             self._init_test_logs()
+            try:
+                self.passing_tests += tests.run_all_tests()
+            except:
+                self.logger.exception(f'Failed while running: {tests}')
             self.passing_tests += tests.run_all_tests()
         elif callable(tests):
             self.total_tests = 1
@@ -71,7 +84,10 @@ class TestRunner:
             m = import_module('.' + cls_name, 'functional_tests')
             cls_impl = getattr(m, cls_name)
             c = cls_impl()
-            c.run_one_test(tests)
+            try:
+                self.passing_tests += c.run_one_test(tests)
+            except:
+                self.logger.exception(f'Failed while running: {tests}')
         
         self._finish_test_logs()
 

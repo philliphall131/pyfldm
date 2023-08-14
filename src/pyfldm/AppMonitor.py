@@ -115,7 +115,7 @@ class AppMonitor:
     def _wait_for_shutdown(self, timeout_secs = MAX_SHUTDOWN_DELAY_SECS, sleep_secs = .5) -> bool:
         start = time()
         while (start + timeout_secs) > time():
-            if not self.is_functional():
+            if not self.is_running():
                 return True
             sleep(sleep_secs)
         return False
@@ -257,6 +257,5 @@ class AppMonitor:
         if fldigi_exe:
             return os.path.join(path_to_exe, fldigi_exe[0])
         else:
-            # TODO
             logger.critical(f"No fldigi exe found in {path_to_exe}. Check your installation of Fldigi, it may be incomplete or corrupted.")
             raise ModuleNotFoundError('No fldigi exe found')
