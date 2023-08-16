@@ -27,4 +27,10 @@ class LogOption(Enum):
     FILE_ONLY = 1
     BOTH = 2
 
+class TestSetupException(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
 
+class TestCleanupException(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)

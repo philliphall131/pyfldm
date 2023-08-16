@@ -21,7 +21,7 @@
 ############################################################################
 import logging
 from xmlrpc.client import ServerProxy
-from .BaseCall import BaseCall
+from .base_call import BaseCall
 
 logger = logging.getLogger(__name__)
 

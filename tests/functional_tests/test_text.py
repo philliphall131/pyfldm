@@ -1,8 +1,8 @@
 from time import sleep
-from pyfldm.AppMonitor import AppMonitor
-from pyfldm.Client import Client
-from .BaseTestCase import BaseTestCase
-from utilities.UserPrompt import UserPrompt
+from pyfldm.appmonitor import AppMonitor
+from pyfldm.client import Client
+from .base_test_case import BaseTestCase
+from utilities.user_prompt import UserPrompt
 
 class TestText(BaseTestCase):
     def __init__(self) -> None:

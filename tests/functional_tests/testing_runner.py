@@ -4,20 +4,20 @@ import logging
 import shutil
 from datetime import datetime
 from importlib import import_module
-from .BaseTestCase import BaseTestCase
+from .base_test_case import BaseTestCase
 from utilities.utilities import PrintColors, LogOption, PrintColorsRegex
 
 TEST_LOGS_DIR = "./test_logs"
 
-class TestRunner:
+class TestingRunner:
     def __init__(self, log_option = 0) -> None:
         self.total_tests = 0
         self.passing_tests = 0
         self.log_option = LogOption(log_option)
         self.log_file = self.get_file_name()
-        self.logger = self.init_loggers()
+        self.logger = self._init_loggers()
 
-    def init_loggers(self):
+    def _init_loggers(self):
         testing_logger = logging.getLogger('functional_tests')
         testing_logger.setLevel(logging.DEBUG)
         pyfldm_logger = logging.getLogger('pyfldm')

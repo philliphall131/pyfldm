@@ -22,15 +22,15 @@
 
 import logging
 import xmlrpc.client
-from .submodules.Fldigi import Fldigi
-from .submodules.IoConfig import IoConfig
-from .submodules.Main import Main
-from .submodules.Modem import Modem
-from .submodules.Navtex import Navtex
-from .submodules.Rig import Rig
-from .submodules.Spot import Spot
-from .submodules.Text import Text
-from .submodules.Wefax import Wefax
+from .submodules.fldigi import Fldigi
+from .submodules.ioconfig import IoConfig
+from .submodules.main import Main
+from .submodules.modem import Modem
+from .submodules.navtex import Navtex
+from .submodules.rig import Rig
+from .submodules.spot import Spot
+from .submodules.text import Text
+from .submodules.wefax import Wefax
 
 logger = logging.getLogger(__name__)
 

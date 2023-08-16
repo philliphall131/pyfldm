@@ -1,6 +1,6 @@
 ############################################################################
 # 
-#  File: AppMonitor.py
+#  File: appmonitor.py
 #  Copyright(c) 2023, Phillip Hall. All rights reserved.
 #
 #  This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ import psutil
 import subprocess
 import logging
 from time import time, sleep
-from .Client import Client
+from .client import Client
 
 logger = logging.getLogger(__name__)
 
@@ -170,59 +170,48 @@ class AppMonitor:
         logger.critical("Fldigi process started but reached max timeout with no connection to xmlrpc. Unconfirmed if Fldigi is functionally running")
         return 1 
     
-    def stop(self, save_options=False, save_log=False, save_macros=False, force_if_unsuccessful=False) -> int:
+    def stop(self, save_options=False, save_log=False, save_macros=False, force_if_unsuccessful=False) -> bool:
         # first verify its actually running
         if not self.is_running():
             logger.info("No Fldigi instances running, nothing to shut down")
-            return 0
+            return True
         logger.debug("Starting graceful shutdown of Fldigi")
         self._client.fldigi.terminate(save_options, save_log, save_macros)
 
         # wait and verify that Fldigi has shut down
         if self._wait_for_shutdown():
             logger.info("Fldigi successfully shut down")
-            return 0
+            return True
         logger.critical("Fldigi graceful shutdown unsuccessful")
         if force_if_unsuccessful:
             return self.kill()
-        return 1
+        return False
     
-    def kill(self) -> int:
+    def kill(self) -> bool:
         # first verify its actually running
         if not self.is_running():
             logger.info("No Fldigi instances running, nothing to shut down")
-            return 0
+            return True
         process_id = self._get_process_id()
         process = psutil.Process(process_id)
         logger.debug("Starting forced shutdown of Fldigi")
+
         # start with a more graceful system SIGTERM
         process.terminate()
-        # if self.platform == 'win32':
-        #     # kill with windows
-        #     psutil.Process(process_id)
-        # else:
-        #     # kill with macos/linux/other
-        #     subprocess.Popen(['kill', str(process_id)])
 
         if self._wait_for_shutdown():
             logger.info("Fldigi successfully force killed via SIGTERM")
-            return 0
+            return True
         logger.warn("Fldigi SIGTERM unsuccessful")
 
         # now try the less graceful SIGKILL
         process.kill()
-        # if self.platform == 'win32':
-        #     # kill with windows
-        #     pass
-        # else:
-        #     # kill with macos/linux/other
-        #     subprocess.Popen(['kill', '-9', str(process_id)])
 
         if self._wait_for_shutdown():
             logger.info("Fldigi successfully force killed via SIGKILL")
-            return 0
+            return True
         logger.critical("Fldigi SIGKILL unsuccessful, cannot shut down Fldigi")
-        return 1
+        return False
 
     def _find_fldigi_exe(self):
         # first look in Program Files (x86)

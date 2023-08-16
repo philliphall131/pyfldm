@@ -8,17 +8,13 @@ class BaseTestCase:
         self.passing = 0
         self.name = self.__module__.split('.')[-1]
 
-    def setup(self) -> None:
-        pass
+    def setup(self) -> None: ...
 
-    def cleanup(self) -> None:
-        pass
+    def cleanup(self) -> None: ...
 
-    def each_setup(self) -> None:
-        pass
+    def each_setup(self) -> None: ...
 
-    def each_cleanup(self) -> None:
-        pass
+    def each_cleanup(self) -> None: ...
 
     def count_tests(self):
         test_methods = [func for func in self.__dir__() if 
@@ -35,7 +31,10 @@ class BaseTestCase:
             
             for test in test_methods:
                 test_func = getattr(self, test)
-                self.run_test(test_func)
+                try:
+                    self.run_test(test_func)
+                except:
+                    logger.error(f"Error in {test_func}, moving on to next test")
 
             self.cleanup()
         except:
@@ -46,16 +45,24 @@ class BaseTestCase:
     def run_one_test(self, func):
         self.name += f'.{func.__name__}'
         self.init_logs()
-        self.setup()
-        
-        self.run_test(func)
+        try:
+            self.setup()
+            
+            self.run_test(func)
 
-        self.cleanup()
+            self.cleanup()
+        except:
+            logger.error("Error in run_one_test")
         self.finish_logs()
         return self.passing
     
     def run_test(self, func):
-        self.each_setup()
+        try:
+            self.each_setup()
+        except Exception as e:
+            logger.error(f'{self.name}:{func.__name__}   Caught setup error in {func.__name__}. Bypassing this test case')
+            return
+
         try:
             func()
             self.passing += 1
@@ -66,8 +73,12 @@ class BaseTestCase:
         except:
             logger.exception(f'{self.name}:{func.__name__}   {PrintColors.RED.value}ERROR{PrintColors.ENDC.value}')
             logger.info("")
-        self.each_cleanup()
 
+        try:
+            self.each_cleanup()
+        except Exception as e:
+            logger.error(f'{self.name}:{func.__name__}   Caught cleanup error in {func.__name__}.')
+            raise e
     
     def init_logs(self):
         logger.info(f'\n{PrintColors.PURPLE.value}======================== {self.name} Starting ========================{PrintColors.ENDC.value}')
