@@ -1,15 +1,23 @@
 from functional_tests.testing_runner import TestingRunner
-from functional_tests.test_appmonitor import TestAppMonitor
-from functional_tests.test_text import TestText
+from functional_tests import TestAppMonitor, TestClient, TestText,\
+    TestClientFldigi
 
-case_app_monitor = TestAppMonitor()
-text_case = TestText()
+test_app_monitor = TestAppMonitor()
+test_client = TestClient()
+test_client_fldigi = TestClientFldigi()
+test_text = TestText()
+
 
 tests_to_run = [
-    case_app_monitor
+    test_app_monitor,
+    test_client,
+    test_client_fldigi,
+    test_text
 ]
 
-tester = TestingRunner(2)
-tester.run(tests_to_run)
+tester = TestingRunner(0)
+# tester.run(tests_to_run)
+
+tester.run(test_client_fldigi)
 
 

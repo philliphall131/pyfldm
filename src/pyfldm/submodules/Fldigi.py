@@ -64,7 +64,7 @@ class Fldigi(BaseCall):
 
         @return(list[dict]): the list of Fldigi xmlrpc methods expressed as an array of dicts
         '''
-        return self.client.fldigi.name_version()
+        return self.client.fldigi.list()
     
     def version(self) -> str:
         '''Gets the program version

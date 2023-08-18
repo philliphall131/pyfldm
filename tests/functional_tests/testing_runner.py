@@ -59,6 +59,7 @@ class TestingRunner:
 
     def run(self, tests):
         if isinstance(tests, list):
+            self.logger.info("Running a list of tests")
             for test in tests:
                 self.total_tests += test.count_tests()
             self._init_test_logs()
@@ -69,15 +70,18 @@ class TestingRunner:
                     self.passing_tests += test.run_all_tests()
                 except:
                     self.logger.exception(f'Failed while running: {test}')
+                    
         elif isinstance(tests, BaseTestCase):
+            self.logger.info("Running a single test file")
             self.total_tests += tests.count_tests()
             self._init_test_logs()
             try:
                 self.passing_tests += tests.run_all_tests()
             except:
                 self.logger.exception(f'Failed while running: {tests}')
-            self.passing_tests += tests.run_all_tests()
+
         elif callable(tests):
+            self.logger.info("Running a single test case")
             self.total_tests = 1
             self._init_test_logs()
             cls_name = tests.__qualname__.split('.')[0]
