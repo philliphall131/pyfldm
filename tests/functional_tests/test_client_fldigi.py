@@ -1,10 +1,8 @@
 import sys
-from time import sleep
 from pyfldm.appmonitor import AppMonitor
 from pyfldm.client import Client
 from .base_test_case import BaseTestCase
 from utilities.user_prompt import UserPrompt
-from utilities.utilities import TestSetupException
 
 class TestClientFldigi(BaseTestCase):
     def __init__(self) -> None:

@@ -23,6 +23,7 @@
 import logging
 from xmlrpc.client import ServerProxy
 from .base_call import BaseCall
+import base64
 
 logger = logging.getLogger(__name__)
 
@@ -55,10 +56,11 @@ class Main(BaseCall):
 
         @return (bool): the AFC state
         '''
-        return self.client.main.get_afc()
+        return bool(self.client.main.get_afc())
     
     def get_char_rates(self) -> str:
         '''Gets the table of char rates
+        *NOTE: I'm not clear on what this means*
 
         @return (str): the char rates
         '''
@@ -66,10 +68,13 @@ class Main(BaseCall):
     
     def get_char_timing(self, char_bytes: bytes) -> str:
         '''Gets transmit duration for the specified character
+        *NOTE: I'm not clear on how to structure the char_bytes or what the response means*
 
-        @param char_bytes(bytes): the bitmask to send for the character (samples:sample rate)
-        @return (bytes): the value of the character
+        @param char_bytes(bytes): the encoded bytes
+        @return (bytes): the value of the character (samples:sample rate)
         '''
+        if type(char_bytes) != bytes:
+            raise TypeError("Must pass in type bytes for arg")
         return self.client.main.get_char_timing(char_bytes)
     
     def get_frequency(self) -> float:
@@ -79,7 +84,7 @@ class Main(BaseCall):
         '''
         return self.client.main.get_frequency()
     
-    def get_local(self) -> bool:
+    def get_lock(self) -> bool:
         '''Gets the Transmit Lock state
 
         @return (bool): the Transmit Lock state
