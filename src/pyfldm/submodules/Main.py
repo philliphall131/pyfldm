@@ -66,16 +66,16 @@ class Main(BaseCall):
         '''
         return self.client.main.get_char_rates()
     
-    def get_char_timing(self, char_bytes: bytes) -> str:
-        '''Gets transmit duration for the specified character
+    def get_char_timing(self, characters: str) -> str:
+        '''Gets transmit duration for the specified character(s)
         *NOTE: I'm not clear on how to structure the char_bytes or what the response means*
 
-        @param char_bytes(bytes): the encoded bytes
+        @param characters(str): the characters to check
         @return (bytes): the value of the character (samples:sample rate)
         '''
-        if type(char_bytes) != bytes:
-            raise TypeError("Must pass in type bytes for arg")
-        return self.client.main.get_char_timing(char_bytes)
+        encoded = str(characters).encode()
+        base_encoded = base64.b16encode(encoded)
+        return self.client.main.get_char_timing(base_encoded)
     
     def get_frequency(self) -> float:
         '''Gets the RF carrier frequency
@@ -89,7 +89,7 @@ class Main(BaseCall):
 
         @return (bool): the Transmit Lock state
         '''
-        return self.client.main.get_local()
+        return bool(self.client.main.get_lock())
     
     def get_max_macro_id(self) -> int:
         '''Gets the maximum macro ID number
@@ -103,24 +103,24 @@ class Main(BaseCall):
 
         @return (bool): the RSID state
         '''
-        return self.client.main.get_rsid()
+        return bool(self.client.main.get_rsid())
     
     def get_txid(self) -> bool:
         '''Gets the TxRSID state
 
         @return (bool): the TxRSID state
         '''
-        return self.client.main.get_txid()
+        return bool(self.client.main.get_txid())
     
     def get_squelch(self) -> bool:
         '''Gets the squelch state
 
         @return (bool): the squelch state
         '''
-        return self.client.main.get_squelch()
+        return bool(self.client.main.get_squelch())
     
     def get_squelch_level(self) -> float:
-        '''Gets the squelch level
+        '''Gets the squelch level (0-100)
 
         @return (float): the squelch level
         '''
@@ -154,13 +154,15 @@ class Main(BaseCall):
         '''
         return self.client.main.get_trx_status()
     
-    def get_trx_timing(self, bitmask: bytes) -> str:
+    def get_tx_timing(self, test_str: str) -> str:
         '''Gets the transmit duration for test string (samples:sample rate:secs)
 
-        @param bitmask(bytes): the bytes to specify the test string (samples:sample rate:secs)
-        @return (str): the transmit/tune/receive status
+        @param test_str(str): the test string 
+        @return (str): the transmit duration
         '''
-        return self.client.main.get_trx_timing(bitmask)
+        encoded = str(test_str).encode()
+        base_encoded = base64.b16encode(encoded)
+        return self.client.main.get_tx_timing(base_encoded)
 
     def get_wf_sideband(self) -> str:
         '''Gets the current waterfall sideband
@@ -169,13 +171,20 @@ class Main(BaseCall):
         '''
         return self.client.main.get_wf_sideband()
     
+    def get_reverse(self) -> bool:
+        '''Gets the Reverse Sideband state
+
+        @return (bool): the Reverse Sideband state
+        '''
+        return bool(self.client.main.get_reverse())
+    
     def inc_frequency(self, amount: float) -> float:
         '''Increments the RF carrier frequency
 
         @param amount(float): the amount to increment the frequency
         @return (float): the new frequency
         '''
-        return self.client.main.inc_frequency(amount)
+        return self.client.main.inc_frequency(float(amount))
     
     def inc_squelch_level(self, amount: float) -> float:
         '''Increments the squelch level
@@ -183,7 +192,7 @@ class Main(BaseCall):
         @param amount(float): the amount to increment the squelch
         @return (float): the new squelch level
         '''
-        return self.client.main.inc_squelch_level(amount)
+        return self.client.main.inc_squelch_level(float(amount))
     
     def run_macro(self, macro_num: int) -> None:
         '''Runs a macro
@@ -191,7 +200,7 @@ class Main(BaseCall):
         @param macro_num(float): the macro number to run
         @return (float): the new frequency
         '''
-        self.client.main.run_macro(macro_num)
+        self.client.main.run_macro(int(macro_num))
     
     def rx(self) -> None:
         '''Puts Fldigi into recieve mode'''
@@ -211,7 +220,7 @@ class Main(BaseCall):
         @param new_state(bool): the new AFC state
         @return (bool): the old state
         '''
-        return self.client.main.set_afc(new_state)
+        return bool(self.client.main.set_afc(new_state))
 
     def set_frequency(self, new_frequency: float) -> float:
         '''Sets the RF carrier frequency
@@ -219,7 +228,7 @@ class Main(BaseCall):
         @param new_state(float): the new frequency
         @return (bool): the old frequency
         '''
-        return self.client.main.set_frequency(new_frequency)
+        return self.client.main.set_frequency(float(new_frequency))
 
     def set_lock(self, new_state: bool) -> bool:
         '''Sets the Transmit Lock state
@@ -227,7 +236,7 @@ class Main(BaseCall):
         @param new_state(bool): the new Transmit lock state
         @return (bool): the old state
         '''
-        return self.client.main.set_lock(new_state)
+        return bool(self.client.main.set_lock(new_state))
     
     def set_reverse(self, new_state: bool) -> bool:
         '''Sets the reverse sideband state
@@ -235,7 +244,7 @@ class Main(BaseCall):
         @param new_state(bool): the new reverse sideband
         @return (bool): the old state
         '''
-        return self.client.main.set_reverse(new_state)
+        return bool(self.client.main.set_reverse(new_state))
     
     def set_rsid(self, new_state: bool) -> bool:
         '''Sets the RSID state
@@ -243,7 +252,7 @@ class Main(BaseCall):
         @param new_state(bool): the new RSID state
         @return (bool): the old state
         '''
-        return self.client.main.set_rsid(new_state)
+        return bool(self.client.main.set_rsid(new_state))
     
     def set_txid(self, new_state: bool) -> bool:
         '''Sets the TxRSID state
@@ -251,7 +260,7 @@ class Main(BaseCall):
         @param new_state(bool): the new TxRSID state
         @return (bool): the old state
         '''
-        return self.client.main.set_txid(new_state)
+        return bool(self.client.main.set_txid(new_state))
     
     def set_squelch(self, new_state: bool) -> bool:
         '''Sets the Squelch state
@@ -259,64 +268,64 @@ class Main(BaseCall):
         @param new_state(bool): the new squelch state
         @return (bool): the old state
         '''
-        return self.client.main.set_squelch(new_state)
+        return bool(self.client.main.set_squelch(new_state))
     
     def set_squelch_level(self, new_level: float) -> float:
-        '''Sets the Squelch level
+        '''Sets the Squelch level (0-100). Values over 100 set to 100
 
         @param new_level(float): the new squelch level
         @return (float): the old level
         '''
-        return self.client.main.set_squelch_level(new_level)
+        return self.client.main.set_squelch_level(float(new_level))
     
     def set_wf_sideband(self, new_sideband: str) -> None:
         '''Sets the waterfall sideband to USB or LSB
 
         @param new_sideband(float): the new squelch level
         '''
-        self.client.main.set_wf_sideband(new_sideband)
+        self.client.main.set_wf_sideband(str(new_sideband))
 
     def toggle_afc(self) -> bool:
         '''Toggles the AFC state
 
         @return (bool): the new state
         '''
-        return self.client.main.toggle_afc()
+        return bool(self.client.main.toggle_afc())
     
     def toggle_lock(self) -> bool:
         '''Toggles the Transmit Lock state
 
         @return (bool): the new state
         '''
-        return self.client.main.toggle_lock()
+        return bool(self.client.main.toggle_lock())
     
     def toggle_reverse(self) -> bool:
         '''Toggles the Reverse Sideband state
 
         @return (bool): the new state
         '''
-        return self.client.main.toggle_reverse()
+        return bool(self.client.main.toggle_reverse())
     
     def toggle_rsid(self) -> bool:
         '''Toggles the RSID state
 
         @return (bool): the new state
         '''
-        return self.client.main.toggle_rsid()
+        return bool(self.client.main.toggle_rsid())
     
     def toggle_txid(self) -> bool:
         '''Toggles the TxRSID state
 
         @return (bool): the new state
         '''
-        return self.client.main.toggle_txid()
+        return bool(self.client.main.toggle_txid())
     
     def toggle_squelch(self) -> bool:
         '''Toggles the squelch state
 
         @return (bool): the new state
         '''
-        return self.client.main.toggle_squelch()
+        return bool(self.client.main.toggle_squelch())
     
     def tune(self) -> None:
         '''Tunes'''

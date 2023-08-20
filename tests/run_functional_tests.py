@@ -23,4 +23,6 @@ tester = TestingRunner(0)
 
 tester.run(test_client_main)
 
+#TODO: add config setting to set computer speakers to audio output
+
 

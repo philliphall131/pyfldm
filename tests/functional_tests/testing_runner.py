@@ -81,11 +81,11 @@ class TestingRunner:
                 self.logger.exception(f'Failed while running: {tests}')
 
         elif callable(tests):
-            self.logger.info("Running a single test case")
             self.total_tests = 1
             self._init_test_logs()
             cls_name = tests.__qualname__.split('.')[0]
-            m = import_module('.' + cls_name, 'functional_tests')
+            module_name = tests.__module__.split('.')[-1]
+            m = import_module('.' + module_name, 'functional_tests')
             cls_impl = getattr(m, cls_name)
             c = cls_impl()
             try:
