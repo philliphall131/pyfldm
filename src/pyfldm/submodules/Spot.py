@@ -51,7 +51,7 @@ class Spot(BaseCall):
         
         @return (bool): the autospotter state
         '''
-        return self.client.spot.get_auto()
+        return bool(self.client.spot.get_auto())
     
     def get_pskrep_count(self) -> int:
         '''Gets the number of callsigns spotted in the current session
@@ -66,13 +66,13 @@ class Spot(BaseCall):
         @param new_state(bool): the new autospotter state
         @return (bool): the old state
         '''
-        return self.client.spot.set_auto(new_state)
+        return bool(self.client.spot.set_auto(new_state))
     
     def toggle_auto(self) -> bool:
         '''Toggles the autospotter state
         
         @return (bool): the new state
         '''
-        return self.client.spot.toggle_auto()
+        return bool(self.client.spot.toggle_auto())
     
     

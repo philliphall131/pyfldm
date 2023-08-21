@@ -80,6 +80,13 @@ class Modem(BaseCall):
         @return (int): the maximum modem ID number
         '''
         return self.client.modem.get_max_id()
+    
+    def get_name(self) -> list:
+        '''Gets the current modem name
+        
+        @return (str): the current modem name
+        '''
+        return self.client.modem.get_name()
 
     def get_names(self) -> list:
         '''Gets the modem names
@@ -95,26 +102,29 @@ class Modem(BaseCall):
         '''
         return self.client.modem.get_quality()
 
-    def increment_afc_search_range(self) -> int:
+    def increment_afc_search_range(self, amount:int ) -> int:
         '''Increments the modem AFC search range
         
+        @param amount(int): the amount to increase the afc search range
         @return (int): the new value
         '''
-        return self.client.modem.inc_afc_search_range()
+        return self.client.modem.inc_afc_search_range(int(amount))
 
-    def increment_bandwidth(self) -> int:
+    def increment_bandwidth(self, amount: int) -> int:
         '''Increments the modem bandwidth
         
+        @param amount(int): the amount to increase the bandwidth
         @return (int): the new value
         '''
-        return self.client.modem.inc_bandwidth()
+        return self.client.modem.inc_bandwidth(int(amount))
     
-    def increment_carrier(self) -> int:
+    def increment_carrier(self, amount: int) -> int:
         '''Increments the modem carrier frequency
         
+        @param amount(int): the amount to increase the frequency
         @return (int): the new carrier frequency
         '''
-        return self.client.modem.inc_carrier()
+        return self.client.modem.inc_carrier(int(amount))
     
     def get_olivia_bandwidth(self) -> int:
         '''Gets the Olivia bandwidth
@@ -131,25 +141,31 @@ class Modem(BaseCall):
         return self.client.modem.olivia.get_tones()
     
     def set_olivia_tones(self, new_tone: int) -> None:
-        '''Sets the Olivia tones
+        '''Sets the Olivia tones. Available values [2, 4, 8, 16, 32, 64, 128, 256]
         
         @param new_tone(int): the new Olivia tones value
         '''
-        self.client.modem.olivia.set_tones(new_tone)
+        tone = int(new_tone)
+        if tone not in [2, 4, 8, 16, 32, 64, 128, 256]:
+            raise ValueError("Must be one of these values: 2, 4, 8, 16, 32, 64, 128, 256")
+        self.client.modem.olivia.set_tones(tone)
 
     def set_olivia_bandwidth(self, new_bandwidth: int) -> None:
-        '''Sets the Olivia bandwidth
+        '''Sets the Olivia bandwidth. Available values [125, 250, 500, 1000, 2000]
         
         @param new_bandwidth(int): the new Olivia bandwidth value
         '''
-        self.client.modem.olivia.set_bandwidth(new_bandwidth)
+        bandwidth = int(new_bandwidth)
+        if bandwidth not in [125, 250, 500, 1000, 2000]:
+            raise ValueError("Must be one of these values: 125, 250, 500, 1000, 2000")
+        self.client.modem.olivia.set_bandwidth(bandwidth)
 
     def search_down(self) -> None:
         '''Searches downward in frequency'''
         self.client.modem.search_down()
 
     def search_up(self) -> None:
-        '''Searches downward in frequency'''
+        '''Searches upward in frequency'''
         self.client.modem.search_up()
 
     def set_afc_search_range(self, new_value: int) -> int:

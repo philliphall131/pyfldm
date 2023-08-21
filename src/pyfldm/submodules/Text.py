@@ -79,6 +79,8 @@ class Text(BaseCall):
         
         @param byte_str(str): the byte string to add to the TX widget
         '''
+        if type(byte_str) != bytes:
+            raise TypeError("Must pass in type bytes")
         self.client.text.add_tx_bytes(byte_str)
 
     def clear_rx(self) -> None:
@@ -96,11 +98,11 @@ class Text(BaseCall):
         @param length(int): the number of characters to get
         @return (bytes): the requested range of characters in a byte string
         '''
-        self.client.text.get_rx(start, length)
+        return self.client.text.get_rx(start, length)
 
     def get_rx_length(self) -> int:
         '''Gets the number of characters in the RX widget
         
         @return (int): the number of characters in the RX widget
         '''
-        self.client.text.get_rx_length()
+        return self.client.text.get_rx_length()

@@ -207,11 +207,18 @@ class Main(BaseCall):
         self.client.main.rx()
     
     def rx_only(self) -> None:
-        '''Puts Fldigi into recieve mode, disables Tx'''
+        '''Puts Fldigi into recieve mode, disables Tx. To reset back to normal operation
+        Use rx_tx()
+        
+        *NOTE: Attempting to programmatically transmit after setting rx_only causes 
+        erratic behavior in Fldig and the reported rx/tx state/status. Recommend avoiding
+        making tx calls when in rx_only
+        '''
         self.client.main.rx_only()
 
     def rx_tx(self) -> None:
-        '''Sets normal Rx/Tx switching'''
+        '''Sets normal Rx/Tx switching. Used to set normal operation if in rx_only mode.
+        '''
         self.client.main.rx_tx()
 
     def set_afc(self, new_state: bool) -> bool:
@@ -279,10 +286,12 @@ class Main(BaseCall):
         return self.client.main.set_squelch_level(float(new_level))
     
     def set_wf_sideband(self, new_sideband: str) -> None:
-        '''Sets the waterfall sideband to USB or LSB
+        '''Sets the waterfall sideband to USB or LSB. 
+        *NOTE: this does not seem to be working
 
-        @param new_sideband(float): the new squelch level
+        @param new_sideband(float): the new sideband
         '''
+        logger.warn("set_wf_sideband xmlrpc endpoint not functioning correct. Set manually in fldigi if expected behavior not observed after making this call")
         self.client.main.set_wf_sideband(str(new_sideband))
 
     def toggle_afc(self) -> bool:

@@ -60,4 +60,4 @@ class Navtex(BaseCall):
         @param message(str): the message to send
         @return (str): empty string if send was good, error message otherwise
         '''
-        return self.client.navtex.send_message(message)
+        return self.client.navtex.send_message(str(message))

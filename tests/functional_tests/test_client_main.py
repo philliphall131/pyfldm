@@ -57,7 +57,7 @@ class TestClientMain(BaseTestCase):
         return True, ""
     
     def test_main_tune_and_abort(self):
-        self.user_prompt.verify_yes("Set your computer sound volume low, between 10-25% and ensure there is no radio connected to the computer")
+        assert self.user_prompt.verify_yes("Set your computer sound volume low, between 10-25% and ensure there is no radio connected to the computer")
         self.client.main.tune()
         assert self.user_prompt.verify_yes("Select Y if you can hear a tone")
         self.client.main.abort()
@@ -117,6 +117,7 @@ class TestClientMain(BaseTestCase):
         tog_lock = self.client.main.toggle_lock
         result, msg = self.get_set_toggle(set_lock, get_lock, tog_lock)
         assert result, msg
+        self.client.main.set_lock(False)
 
     def test_main_get_max_macro_id(self):
         num = self.client.main.get_max_macro_id()
@@ -179,44 +180,54 @@ class TestClientMain(BaseTestCase):
         assert type(result) == str
 
     def test_main_get_set_wf_sideband(self):
-        pass
+        result1 = self.client.main.get_wf_sideband()
+        assert type(result1) == str
+        assert result1 in ["LSB", "USB"]
+
+        # TODO: I can't get the set to work yet
+        # self.client.main.set_wf_sideband("LSB")
+
+        # result2 = self.client.main.get_wf_sideband()
+        # assert type(result2) == str
+        # assert result2 == "LSB"
 
     def test_main_run_macro(self):
-        self.user_prompt.verify_yes("Set your computer sound volume low, between 10-25% and ensure there is no radio connected to the computer")
+        assert self.user_prompt.verify_yes("Set your computer sound volume low, between 10-25% and ensure there is no radio connected to the computer")
         self.client.main.run_macro(8)
         assert self.user_prompt.verify_yes("Select Y if you can hear a tone")
         self.client.main.abort()
         sleep(2)
 
     def test_main_rx_tx(self):
-        # self.user_prompt.verify_yes("Set your computer sound volume low, between 10-25% and ensure there is no radio connected to the computer")
+        assert self.user_prompt.verify_yes("Set your computer sound volume low, between 10-25% and ensure there is no radio connected to the computer")
 
-        # state1 = self.client.main.get_trx_state()
-        # assert state1 == "RX"
-        # state2 = self.client.main.get_trx_status()
-        # assert state2 == "rx"
+        state1 = self.client.main.get_trx_state()
+        assert state1 == "RX"
+        state2 = self.client.main.get_trx_status()
+        assert state2 == "rx"
 
-        # self.client.main.tx()
-        # sleep(1)
-        # state3 = self.client.main.get_trx_state()
-        # assert state1 == "TX"
-        # state4 = self.client.main.get_trx_status()
-        # assert state2 == "tx"
+        self.client.main.tx()
+        sleep(2)
+        state3 = self.client.main.get_trx_state()
+        assert state3 == "TX"
+        state4 = self.client.main.get_trx_status()
+        assert state4 == "tx"
 
-        # self.client.main.rx()
-        # sleep(1)
-        # state1 = self.client.main.get_trx_state()
-        # assert state1 == "RX"
-        # state2 = self.client.main.get_trx_status()
-        # assert state2 == "rx"
+        self.client.main.rx()
+        sleep(10)
+        state5 = self.client.main.get_trx_state()
+        assert state5 == "RX"
+        state6 = self.client.main.get_trx_status()
+        assert state6 == "rx"
 
+        ###################
+        #NOTE: rx_only causes erratic behvior if followed by attempting to programatically transmit
+        self.client.main.rx_only()
+        sleep(3)
 
-        # # rx only
-        # # rx_tx
-        pass
-
-    
-
-
-
-        
+        self.client.main.rx_tx()
+        sleep(3)
+        state9 = self.client.main.get_trx_state()
+        assert state9 == "RX"
+        state10 = self.client.main.get_trx_status()
+        assert state10 == "rx"
