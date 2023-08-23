@@ -15,15 +15,11 @@ class TestClientModem(BaseTestCase):
         if self.app.is_running():
             self.app.stop(force_if_unsuccessful=True)
         self.app.start()
+        self.client.modem.set_by_name("CW")
     
     def cleanup(self) -> None:
         if self.app.is_running():
             self.app.stop(force_if_unsuccessful=True)
-    
-    def restart(self) -> None:
-        self.app.stop()
-        sleep(2)
-        self.app.start()
 
     def test_modem_get_set_modem(self):
         result1 = self.client.modem.set_by_name("CW")

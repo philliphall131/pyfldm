@@ -15,6 +15,7 @@ class TestClientText(BaseTestCase):
         if self.app.is_running():
             self.app.stop(force_if_unsuccessful=True)
         self.app.start()
+        self.client.modem.set_by_name("CW")
     
     def cleanup(self) -> None:
         if self.app.is_running():
@@ -57,6 +58,7 @@ class TestClientText(BaseTestCase):
         assert "Hello World2" in result2_str
     
     def test_text_get_rx_data(self):
+        self.client.modem.set_by_name("THOR8")
         assert self.user_prompt.verify_yes("Manually set Fldigi configuration to use computer speakers/mic as the audio in/out devices.")
         assert self.user_prompt.verify_yes("Make some external noise, like playing a song from a phone, near the computer. ")
         sleep(10)

@@ -8,3 +8,4 @@ from .test_client_navtex import TestClientNavtex
 from .test_client_rig import TestClientRig
 from .test_client_spot import TestClientSpot
 from .test_client_text import TestClientText
+from .test_client_wefax import TestClientWefax

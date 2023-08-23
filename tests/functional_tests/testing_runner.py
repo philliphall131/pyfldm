@@ -90,7 +90,7 @@ class TestingRunner:
             c = cls_impl()
             try:
                 self.passing_tests += c.run_one_test(tests)
-            except:
+            except Exception:
                 self.logger.exception(f'Failed while running: {tests}')
         
         self._finish_test_logs()

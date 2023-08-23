@@ -15,15 +15,11 @@ class TestClientMain(BaseTestCase):
         if self.app.is_running():
             self.app.stop(force_if_unsuccessful=True)
         self.app.start()
+        self.client.modem.set_by_name("CW")
     
     def cleanup(self) -> None:
         if self.app.is_running():
-            self.app.stop(force_if_unsuccessful=True)
-    
-    def restart(self) -> None:
-        self.app.stop()
-        sleep(2)
-        self.app.start()  
+            self.app.stop(force_if_unsuccessful=True) 
     
     def get_set_toggle(self, set_func:str, get_func:str, tog_func:str) -> bool:
         state1 = set_func(True)

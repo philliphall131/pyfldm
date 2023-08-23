@@ -26,40 +26,29 @@ class BaseTestCase:
         # gather up all the tests and run them
         test_methods = [func for func in self.__dir__() if 
                         func.startswith("test_")]
-        try:
-            self.setup()
+        self.setup()
             
-            for test in test_methods:
-                test_func = getattr(self, test)
-                try:
-                    self.run_test(test_func)
-                except:
-                    logger.error(f"Error in {test_func}, moving on to next test")
+        for test in test_methods:
+            test_func = getattr(self, test)
+            self.run_test(test_func)
 
-            self.cleanup()
-        except:
-            logger.error("Error in run_all_tests")
+        self.cleanup()
         self.finish_logs()
         return self.passing
     
     def run_one_test(self, func):
         self.name += f'.{func.__name__}'
         self.init_logs()
-        try:
-            self.setup()
-            
-            self.run_test(func)
-
-            self.cleanup()
-        except:
-            logger.error("Error in run_one_test")
+        self.setup()
+        self.run_test(func)
+        self.cleanup()
         self.finish_logs()
         return self.passing
     
     def run_test(self, func):
         try:
             self.each_setup()
-        except Exception as e:
+        except Exception:
             logger.error(f'{self.name}:{func.__name__}   Caught setup error in {func.__name__}. Bypassing this test case')
             return
 
@@ -70,7 +59,7 @@ class BaseTestCase:
         except AssertionError:
             logger.exception(f'{self.name}:{func.__name__}   {PrintColors.RED.value}FAIL{PrintColors.ENDC.value}')
             logger.info("")
-        except:
+        except Exception:
             logger.exception(f'{self.name}:{func.__name__}   {PrintColors.RED.value}ERROR{PrintColors.ENDC.value}')
             logger.info("")
 

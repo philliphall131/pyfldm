@@ -98,7 +98,7 @@ class Rig(BaseCall):
     def set_bandwidths(self, bandwidths: list) -> None:
         '''Sets the list of available rig bandwidths
         
-        @param bandwidths(list): a list of bandwidths
+        @param bandwidths(list[str]): a list of bandwidths as strings
         '''
         if type(bandwidths) != list:
             raise ValueError("Must pass in a list")

@@ -63,6 +63,7 @@ class Wefax(BaseCall):
     
     def send_file(self, max_delay_secs: int) -> str:
         '''Sends file
+        #TODO: this endpoint does not work as specified. Need to figure out what type and what actual data it expects to send for a valid call
         
         @param max_delay_secs(int): the max time in seconds to wait
         @return (str): empty string if successful send, error message otherwise
@@ -72,10 +73,10 @@ class Wefax(BaseCall):
     def set_adif_log(self, reset: bool = False) -> str:
         '''Set/reset logging to received/transmit images to ADIF log file
         
-        @param max_delay_secs(int): the max time in seconds to wait
+        @param reset(bool): True to log to file, false to disable
         @return (str): empty string if successful send, error message otherwise
         '''
-        return self.client.wefax.set_adif_log()
+        return self.client.wefax.set_adif_log(reset)
     
     def set_max_lines(self, max_lines: int) -> str:
         '''Set maximum lines for fax image reception
@@ -83,7 +84,7 @@ class Wefax(BaseCall):
         @param max_lines(int): the max lines to set
         @return (str): empty string if successful send, error message otherwise
         '''
-        return self.client.wefax.set_max_lines()
+        return self.client.wefax.set_max_lines(max_lines)
     
     def set_tx_abort_flag(self) -> str:
         '''Cancels Wefax image transmission
