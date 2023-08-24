@@ -42,6 +42,3 @@ False
 4.1.26
 
 ```
-## Upcoming Features in v.1.0.0
-* Fully tested endpoints for every Fldigi xmlrpc call
-* Better documentation

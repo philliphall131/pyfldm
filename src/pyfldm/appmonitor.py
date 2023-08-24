@@ -60,7 +60,7 @@ class AppMonitor:
 
     def __init__(self, hostname:str='127.0.0.1', port:int=7362, exe_path:str=None) -> None:
         self.platform = sys.platform
-        self.process = None
+        self.process_id = None
         self.hostname = hostname
         self.port = int(port)
         self._client = Client(hostname, port)
@@ -75,21 +75,37 @@ class AppMonitor:
             logger.debug("Detected Linux/Other OS")
 
     def _get_process_id(self) -> int:
-        if self.platform == 'win32':
-            # filter processes to find fldigi, if it exists
-            fldigi_process = [proc for proc in psutil.process_iter(['pid', 'name']) if 'fldigi' in proc.name()]
-            if fldigi_process:
-                return fldigi_process[0].pid
-            # No fldigi process found
+        if self.process_id:
+            # check that the process id is still valid and return it, otherwise
+            # set it to none and continue
+            try:
+                process = psutil.Process(self.process_id)
+                if process.status() not in ['dead', 'zombie']:
+                    return self.process_id
+            except psutil.NoSuchProcess:
+                pass
+            # if we got here, the process is either non-existant (NoSuchProcess), dead,
+            # or zombied so just continue on to see if theres any other fldigi processes
+            self.process_id = None
+
+        # filter processes to find fldigi, if it exists
+        fldigi_processes = [proc for proc in psutil.process_iter(['pid', 'name']) if 'fldigi' in proc.name()]
+        if not fldigi_processes:
+            # no fldigi processes found
             return 0
-        else:
-            process1 = subprocess.Popen(['ps', 'aux'], stdout=subprocess.PIPE)
-            try: 
-                process2 = subprocess.check_output(['pgrep', '-f', 'fldigi'], stdin=process1.stdout)
-            except subprocess.CalledProcessError:
-                return 0
-            else:
-                return int(process2.decode().strip())
+        # filter out any zombie processes (occurs on linux)
+        valid_processes = []
+        for proc in fldigi_processes:
+            if proc.status() != 'zombie':
+                valid_processes.append(proc)
+        if not valid_processes:
+            # no fldigi processes found
+            return 0
+        elif len(valid_processes) > 1:
+            logger.warning("Multiple valid Fldigi instances running, choosing most recently started instance.")
+            valid_processes.sort(key=lambda x: x.create_time(), reverse=True)
+        return valid_processes[0].pid
+
 
     def is_running(self) -> bool:
         return True if self._get_process_id() else False
@@ -162,7 +178,8 @@ class AppMonitor:
             pass
         
         # start the process with the gathered command line arguments
-        self.process = subprocess.Popen(startup_args + addl_args)
+        process = subprocess.Popen(startup_args + addl_args)
+        self.process_id = process.pid
 
         if self._wait_for_startup():
             logger.debug("Fldigi fully functional")

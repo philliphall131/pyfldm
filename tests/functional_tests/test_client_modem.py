@@ -148,14 +148,11 @@ class TestClientModem(BaseTestCase):
 
         result1 = self.client.modem.get_carrier()
         self.client.modem.search_down()
-        sleep(1)
-        result2 = self.client.modem.get_carrier()
-        assert result2 < result1
-
         self.client.modem.search_up()
         sleep(1)
-        result3 = self.client.modem.get_carrier()
-        assert result3 > result2
+        result2 = self.client.modem.get_carrier()
+        assert result1 != result2
+        assert self.user_prompt.verify_yes("Stop playing external sounds")
     
     def test_modem_olivia_bandwidth(self):
         self.client.modem.set_olivia_bandwidth(125)

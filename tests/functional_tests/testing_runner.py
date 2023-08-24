@@ -59,7 +59,6 @@ class TestingRunner:
 
     def run(self, tests):
         if isinstance(tests, list):
-            self.logger.info("Running a list of tests")
             for test in tests:
                 self.total_tests += test.count_tests()
             self._init_test_logs()
@@ -72,7 +71,6 @@ class TestingRunner:
                     self.logger.exception(f'Failed while running: {test}')
                     
         elif isinstance(tests, BaseTestCase):
-            self.logger.info("Running a single test file")
             self.total_tests += tests.count_tests()
             self._init_test_logs()
             try:

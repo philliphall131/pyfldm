@@ -32,6 +32,7 @@ class TestAppMonitor(BaseTestCase):
     
     def test_app_is_running_and_functional(self):
         assert self.user_prompt.verify_yes("Start Fldigi manually, select Y when complete.")
+        sleep(5)
 
         assert self.app.is_running()
         assert self.app.is_functional()
