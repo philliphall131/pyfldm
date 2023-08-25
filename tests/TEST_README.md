@@ -15,10 +15,10 @@ source venv/bin/activate
 3. Install the python test dependencies, including local pyfldm
 ```
 pip install .   # this installs pyfldm in the venv
-cd tests/
 pip install -r requirements.txt
 ```
 4. Select which tests to run
+  - Move into tests folder (cd tests/)
   - Open run_functional_tests.py
   - Select either all the tests, a single test module, or a single test function to run as follows:
 ```

@@ -1,8 +1,8 @@
 from time import sleep
 import sys
 import logging
-from pyfldm import AppMonitor
-from pyfldm import Client
+from pyfldm.appmonitor import AppMonitor
+from pyfldm.client import Client
 from .base_test_case import BaseTestCase
 from utilities.user_prompt import UserPrompt
 from utilities.utilities import TestSetupException, PrintColors

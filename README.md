@@ -17,7 +17,7 @@ pip install pyfldm
 Example uses:
 1. Controlling the Application (start, stop, status)
 ```
->>> from pyfldm.AppMonitor import AppMonitor
+>>> from pyfldm.appMonitor import AppMonitor
 >>> app = AppMonitor()
 >>> app.start()
 >>> # wait a few seconds for Fldigi to start up
@@ -36,7 +36,7 @@ False
 2. Using the XMLRPC API
 ```
 # * assuming that Fldigi is already running
->>> from pyfldm.Client import Client
+>>> from pyfldm.client import Client
 >>> client = Client()
 >>> client.fldigi.version()
 4.1.26

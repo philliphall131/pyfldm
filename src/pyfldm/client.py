@@ -42,6 +42,21 @@ class Client:
 
     @param hostname(str): the IP address of the xmlrpc server to connect to
     @param port(int): the port number of the xmlrpc server connection
+    
+    Example use:
+    # * assuming that Fldigi is already running
+    >>> from pyfldm.client import Client
+    >>> c = Client()
+    >>> methods = c.get_all_methods()
+    >>> print(methods[0])
+    {'fldigi': ['config_dir', 'list', 'name', 'name_and_version', 'terminate', 'version', 'version_struct']}
+    >>> c.print_all_methods()
+    ---------------------
+    client.fldigi methods
+    ---------------------
+    fldigi.config_dir
+    fldigi.list
+    ...
     '''
 
     def __init__(self, hostname='127.0.0.1', port=7362) -> None:

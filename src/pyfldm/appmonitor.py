@@ -43,7 +43,8 @@ class AppMonitor:
     Example for windows: exe_path = "C:\\\\\\Users\\\\\\Me\\\\\\Desktop\\\\\\fldigi-folder\\\\\\fldigi.exe ***must use double slash for python to understand the windows path as a string***, 
     Example for linux: exe_path = "/home/myself/Desktop/fldigi-folder/fldigi-4.1.26
 
-    >>> from pyfldm.AppMonitor import AppMonitor
+    Example use:
+    >>> from pyfldm.appMonitor import AppMonitor
     >>> app = AppMonitor()
     >>> app.start()
     >>> # wait a few seconds for Fldigi to start up
