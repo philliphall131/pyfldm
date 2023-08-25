@@ -190,6 +190,7 @@ class TestClientMain(BaseTestCase):
     def test_main_run_macro(self):
         assert self.user_prompt.verify_yes("Set your computer sound volume low, between 10-25% and ensure there is no radio connected to the computer")
         self.client.main.run_macro(11)
+        sleep(5)
         assert self.user_prompt.verify_yes("Select Y if you heard some tones")
         self.client.main.abort()
         sleep(2)
