@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 import logging
 import shutil
@@ -106,9 +107,12 @@ class TestingRunner:
             self._clean_log_file()
     
     def _clean_log_file(self):
+        # windows wont let the script remove the file, so just skip cleaning it
+        if sys.platform == "win32":
+            return
         if not os.path.isfile(f'{TEST_LOGS_DIR}/{self.log_file}'):
             return
-        
+ 
         with open(f'{TEST_LOGS_DIR}/{self.log_file}', 'r') as fin:
             with open(f'{TEST_LOGS_DIR}/tmp.log', 'w') as fout:
                 for line in fin:
@@ -116,9 +120,3 @@ class TestingRunner:
                         pattern = f'{color.value}'
                         line = re.sub(pattern, "", line)
                     fout.write(line)
-
-        
-        os.remove(f'{TEST_LOGS_DIR}/{self.log_file}')  
-        shutil.move(f'{TEST_LOGS_DIR}/tmp.log', f'{TEST_LOGS_DIR}/{self.log_file}')
-    
-        
