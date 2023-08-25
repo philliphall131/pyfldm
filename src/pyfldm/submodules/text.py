@@ -1,6 +1,6 @@
 ############################################################################
 # 
-#  File: Text.py
+#  File: text.py
 #  Copyright(c) 2023, Phillip Hall. All rights reserved.
 #
 #  This library is free software; you can redistribute it and/or
