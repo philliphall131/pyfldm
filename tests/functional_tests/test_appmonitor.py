@@ -99,13 +99,26 @@ class TestAppMonitor(BaseTestCase):
         if sys.platform != 'win32':
             logger.info(f'{self.name}::{PrintColors.YELLOW.value}INFO{PrintColors.ENDC.value}: Not a Windows OS platform, skipping test')
             return
-        # TODO
+        response = self.user_prompt.skip_option("Copy the fldigi program folder into C:\\Users\\Public\\Desktop then continue")
+        if response == 'skip':
+            return
+        new_app = AppMonitor(exe_path="C:\\Users\\Public\\Desktop\\Fldigi-4.1.27\\fldigi.exe")
+        new_app.start()
+        assert self.user_prompt.verify_yes("Verify that the Fldigi app launched")
+        new_app.stop()
+
 
     def test_windows_find_multiple_exe(self):
         if sys.platform != 'win32':
             logger.info(f'{self.name}::{PrintColors.YELLOW.value}INFO{PrintColors.ENDC.value}: Not a Windows OS platform, skipping test')
             return
-        # TODO
+        response = self.user_prompt.skip_option("Find the fldigi program folder in Program Files and copy it into the same location, renaming it to increase the version number then continue")
+        if response == 'skip':
+            return
+        new_app = AppMonitor()
+        new_app.start()
+        assert self.user_prompt.verify_yes("Verify that the Fldigi app launched")
+        new_app.stop()
 
     def test_get_process_id(self):
         self.app.start()
@@ -116,5 +129,8 @@ class TestAppMonitor(BaseTestCase):
         self.app.stop(force_if_unsuccessful=True)
     
     def test_repeated_power_cycles(self):
-        #TODO
-        pass
+        CYCLES = 20
+        for i in range(20):
+            logger.info(f'Starting power cycle {i+1}')
+            self.app.start()
+            self.app.stop()
