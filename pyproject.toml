@@ -18,8 +18,9 @@ classifiers = [
 ]
 dependencies = [
     "psutil >= 5.9.5",
+    "xvfbwrapper >= 0.2.9"
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/philliphall131/pyfldm"
-"Bug Tracker" = "https://github.com/philliphall131/pyfldm/issues"
+"Issues" = "https://github.com/philliphall131/pyfldm/issues"
