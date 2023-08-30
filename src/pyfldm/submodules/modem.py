@@ -24,8 +24,6 @@ import logging
 from xmlrpc.client import ServerProxy
 from .base_call import BaseCall
 
-logger = logging.getLogger(__name__)
-
 class Modem(BaseCall):
     '''Houses the commands in the Modem group in the XML-RPC spec for fldigi.
     Reference: http://www.w1hkj.com/FldigiHelp/xmlrpc_control_page.html
@@ -43,6 +41,7 @@ class Modem(BaseCall):
     '''
     def __init__(self, client: ServerProxy) -> None:
         self.client = client
+        self.logger = logging.getLogger(__name__)
     
     def __str__(self) -> str:
         return __name__.lower().split(".")[-1]

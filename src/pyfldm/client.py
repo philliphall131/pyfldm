@@ -32,8 +32,6 @@ from .submodules.spot import Spot
 from .submodules.text import Text
 from .submodules.wefax import Wefax
 
-logger = logging.getLogger(__name__)
-
 class Client:
 
     ''' Client serves as the client side connection to Fldigi via the xmlrpc API. 
@@ -63,6 +61,7 @@ class Client:
         self.hostname = hostname
         self.port = port
         self.client = xmlrpc.client.ServerProxy(f'http://{self.hostname}:{self.port}/', allow_none=True)
+        self.logger = logging.getLogger(__name__)
 
         self.fldigi = Fldigi(self.client)
         self.io = IoConfig(self.client)
@@ -85,7 +84,7 @@ class Client:
             self.wefax
         ]
 
-        logger.info(f"Setup Fldigi client on {hostname}:{port}")
+        self.logger.info(f"Setup Fldigi client on {hostname}:{port}")
 
     def get_all_methods(self) -> list:
         '''Returns the list of commands in which can be used to command Fldigi via the xmlrpc interface

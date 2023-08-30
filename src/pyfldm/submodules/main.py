@@ -25,8 +25,6 @@ from xmlrpc.client import ServerProxy
 from .base_call import BaseCall
 import base64
 
-logger = logging.getLogger(__name__)
-
 class Main(BaseCall):
     '''Houses the commands in the main group in the XML-RPC spec for fldigi.
     Reference: http://www.w1hkj.com/FldigiHelp/xmlrpc_control_page.html
@@ -44,6 +42,7 @@ class Main(BaseCall):
     '''
     def __init__(self, client: ServerProxy) -> None:
         self.client = client
+        self.logger = logging.getLogger(__name__)
     
     def __str__(self) -> str:
         return __name__.lower().split(".")[-1]
@@ -292,7 +291,7 @@ class Main(BaseCall):
 
         @param new_sideband(float): the new sideband
         '''
-        logger.warn("set_wf_sideband xmlrpc endpoint not functioning correct. Set manually in fldigi if expected behavior not observed after making this call")
+        self.logger.warn("set_wf_sideband xmlrpc endpoint not functioning correct. Set manually in fldigi if expected behavior not observed after making this call")
         self.client.main.set_wf_sideband(str(new_sideband))
 
     def toggle_afc(self) -> bool:

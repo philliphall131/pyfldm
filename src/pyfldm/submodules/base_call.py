@@ -20,15 +20,13 @@
 #
 ############################################################################
 import logging
-from xmlrpc.client import ServerProxy
-
-logger = logging.getLogger(__name__)
 
 class BaseCall:
     '''Serves as a base class for each of the sub-namespaces of the xmlrpc API
     to house common functionality
     '''
     def __init__(self) -> None:
+        self.logger = logging.getLogger(__name__)
         pass
 
     def print_methods(self) -> None:

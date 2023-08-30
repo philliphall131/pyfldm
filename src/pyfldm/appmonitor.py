@@ -27,8 +27,6 @@ import logging
 from time import time, sleep
 from .client import Client
 
-logger = logging.getLogger(__name__)
-
 MAX_STARTUP_DELAY_SECS = 10
 MAX_SHUTDOWN_DELAY_SECS = 10
 
@@ -66,14 +64,15 @@ class AppMonitor:
         self.port = int(port)
         self._client = Client(hostname, port)
         self.exe_path = exe_path
+        self.logger = logging.getLogger(__name__)
 
         # log platform
         if self.platform == 'darwin':
-            logger.debug("Detected MacOS")
+            self.logger.debug("Detected MacOS")
         elif self.platform == 'win32':
-            logger.debug("Detected Windows")
+            self.logger.debug("Detected Windows")
         else:
-            logger.debug("Detected Linux/Other OS")
+            self.logger.debug("Detected Linux/Other OS")
 
     def _get_process_id(self) -> int:
         if self.process_id:
@@ -103,7 +102,7 @@ class AppMonitor:
             # no fldigi processes found
             return 0
         elif len(valid_processes) > 1:
-            logger.warning("Multiple valid Fldigi instances running, choosing most recently started instance.")
+            self.logger.warning("Multiple valid Fldigi instances running, choosing most recently started instance.")
             valid_processes.sort(key=lambda x: x.create_time(), reverse=True)
         return valid_processes[0].pid
 
@@ -116,7 +115,7 @@ class AppMonitor:
             if self._client.fldigi.name() == 'fldigi':
                 return True
             else:
-                logger.warning("Connection made but Fldigi name() not responding with 'fldigi'")
+                self.logger.warning("Connection made but Fldigi name() not responding with 'fldigi'")
                 return False
         except ConnectionRefusedError:
             return False
@@ -140,9 +139,9 @@ class AppMonitor:
     def start(self) -> int:
         # check if application already running
         if self.is_running():
-            logger.warning("Fldigi is already running. Shut down all instances of Fldigi before using AppMonitor.start()")
+            self.logger.warning("Fldigi is already running. Shut down all instances of Fldigi before using AppMonitor.start()")
             return 0
-        logger.info("Starting Fldigi")
+        self.logger.info("Starting Fldigi")
 
         addl_args = ['--xmlrpc-server-address', 
                      self.hostname, 
@@ -183,24 +182,24 @@ class AppMonitor:
         self.process_id = process.pid
 
         if self._wait_for_startup():
-            logger.debug("Fldigi fully functional")
+            self.logger.debug("Fldigi fully functional")
             return 0
-        logger.critical("Fldigi process started but reached max timeout with no connection to xmlrpc. Unconfirmed if Fldigi is functionally running")
+        self.logger.critical("Fldigi process started but reached max timeout with no connection to xmlrpc. Unconfirmed if Fldigi is functionally running")
         return 1 
     
     def stop(self, save_options=False, save_log=False, save_macros=False, force_if_unsuccessful=False) -> bool:
         # first verify its actually running
         if not self.is_running():
-            logger.info("No Fldigi instances running, nothing to shut down")
+            self.logger.info("No Fldigi instances running, nothing to shut down")
             return True
-        logger.debug("Starting graceful shutdown of Fldigi")
+        self.logger.debug("Starting graceful shutdown of Fldigi")
         self._client.fldigi.terminate(save_options, save_log, save_macros)
 
         # wait and verify that Fldigi has shut down
         if self._wait_for_shutdown():
-            logger.info("Fldigi successfully shut down")
+            self.logger.info("Fldigi successfully shut down")
             return True
-        logger.critical("Fldigi graceful shutdown unsuccessful")
+        self.logger.critical("Fldigi graceful shutdown unsuccessful")
         if force_if_unsuccessful:
             return self.kill()
         return False
@@ -208,27 +207,27 @@ class AppMonitor:
     def kill(self) -> bool:
         # first verify its actually running
         if not self.is_running():
-            logger.info("No Fldigi instances running, nothing to shut down")
+            self.logger.info("No Fldigi instances running, nothing to shut down")
             return True
         process_id = self._get_process_id()
         process = psutil.Process(process_id)
-        logger.debug("Starting forced shutdown of Fldigi")
+        self.logger.debug("Starting forced shutdown of Fldigi")
 
         # start with a more graceful system SIGTERM
         process.terminate()
 
         if self._wait_for_shutdown():
-            logger.info("Fldigi successfully force killed via SIGTERM")
+            self.logger.info("Fldigi successfully force killed via SIGTERM")
             return True
-        logger.warn("Fldigi SIGTERM unsuccessful")
+        self.logger.warn("Fldigi SIGTERM unsuccessful")
 
         # now try the less graceful SIGKILL
         process.kill()
 
         if self._wait_for_shutdown():
-            logger.info("Fldigi successfully force killed via SIGKILL")
+            self.logger.info("Fldigi successfully force killed via SIGKILL")
             return True
-        logger.critical("Fldigi SIGKILL unsuccessful, cannot shut down Fldigi")
+        self.logger.critical("Fldigi SIGKILL unsuccessful, cannot shut down Fldigi")
         return False
 
     def _find_fldigi_exe(self):
@@ -241,11 +240,11 @@ class AppMonitor:
             fldigi_dir = [dir for dir in os.listdir(prog_files) if 'fldigi' in dir.lower()]
         # No Fldigi folders found in any Program Files directories
         if not fldigi_dir:
-            logger.critical("Cannot find FLDigi in either Program Files or Program Files (x86). Check that FLDigi is installed or pass in the path to the fldigi .exe")
+            self.logger.critical("Cannot find FLDigi in either Program Files or Program Files (x86). Check that FLDigi is installed or pass in the path to the fldigi .exe")
             raise ModuleNotFoundError("Cannot find FLDigi. Ensure it's installed or pass in path to .exe")
 
         if len(fldigi_dir) > 1:
-            logger.warning("Found multiple versions or installs of Fldigi. Defaulting to the latest version, as best as can be determined. If another version or install is preferred, pass in the .exe path to AppMonitor")
+            self.logger.warning("Found multiple versions or installs of Fldigi. Defaulting to the latest version, as best as can be determined. If another version or install is preferred, pass in the .exe path to AppMonitor")
             # get the latest version number, sort so the latest is first
             fldigi_dir.sort(reverse=True)
             # ensure there is an exe in the folder we want, if not iterate through th fldigi folders to find one
@@ -254,9 +253,9 @@ class AppMonitor:
                 files_in_dir = os.listdir(current_dir)
                 for file in files_in_dir:
                     if  (('fldigi' in file) and ('.exe' in file)):
-                        logger.info(f"The latest usable version found is {current_dir}, attempting to start with this installation")
+                        self.logger.info(f"The latest usable version found is {current_dir}, attempting to start with this installation")
                         return os.path.join(current_dir, file)
-                logger.warn(f"No fldigi exe found in {current_dir}. This may be a corrupted installation. Attempting the next installed version, if any")
+                self.logger.warn(f"No fldigi exe found in {current_dir}. This may be a corrupted installation. Attempting the next installed version, if any")
             
             return
         path_to_exe = os.path.join(prog_files, fldigi_dir[0])
@@ -264,5 +263,5 @@ class AppMonitor:
         if fldigi_exe:
             return os.path.join(path_to_exe, fldigi_exe[0])
         else:
-            logger.critical(f"No fldigi exe found in {path_to_exe}. Check your installation of Fldigi, it may be incomplete or corrupted.")
+            self.logger.critical(f"No fldigi exe found in {path_to_exe}. Check your installation of Fldigi, it may be incomplete or corrupted.")
             raise ModuleNotFoundError('No fldigi exe found')
