@@ -10,11 +10,17 @@ A library to be used for interacting with and controlling the Fldigi application
 Can be used to control the application directly via python library, such as to start, stop, and monitor the running status. But the primary usage is in serving as an api to Fldigi via xmlrpc
 
 ## Installation
+```
 pip install pyfldm
+```
+To use the headless feature (linux only)
+```
+sudo apt install xvfb
+```
+
 
 ## Using pyfldm
 
-Example uses:
 1. Controlling the Application (start, stop, status)
 ```
 >>> from pyfldm.appMonitor import AppMonitor
@@ -41,4 +47,13 @@ False
 >>> client.fldigi.version()
 4.1.26
 
+```
+
+
+3. Using pyfldm with fldigi headless
+
+**** Only on linux, must have xvfb installed ****
+```
+from pyfldm.appmonitor import AppMonitor
+app = AppMonitor(headless=True)
 ```

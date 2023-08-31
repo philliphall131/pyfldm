@@ -25,6 +25,7 @@ import psutil
 import subprocess
 import logging
 from time import time, sleep
+from xvfbwrapper import Xvfb
 from .client import Client
 from .submodules.flconfig import FlConfig
 
@@ -58,7 +59,12 @@ class AppMonitor:
     False
     '''
 
-    def __init__(self, hostname:str='127.0.0.1', port:int=7362, exe_path:str=None) -> None:
+    def __init__(self, 
+                 hostname:str='127.0.0.1', 
+                 port:int=7362, 
+                 exe_path:str=None, 
+                 headless:bool=False,
+                 multi:bool=False) -> None:
         self.platform = sys.platform
         self.process_id = None
         self.hostname = hostname
@@ -68,6 +74,15 @@ class AppMonitor:
         self.logger = logging.getLogger(__name__)
         self.config_manager = FlConfig()
 
+        self.headless = headless
+        self.multi = multi
+        self.vdisplay = None
+
+        # log warning on using multi feature
+        if self.multi:
+            self.logger.warning("Use caution with the multi feature. If you do not maintain a consistent object to\
+                            start and stop the application, you may experience erratic results when starting\
+                            and stopping multiple instances of fldigi.")
 
         # log platform
         if self.platform == 'darwin':
@@ -141,7 +156,7 @@ class AppMonitor:
 
     def start(self) -> int:
         # check if application already running
-        if self.is_running():
+        if (not self.multi) and (self.is_running()):
             self.logger.warning("Fldigi is already running. Shut down all instances of Fldigi before using AppMonitor.start()")
             return 0
         self.logger.info("Starting Fldigi")
@@ -178,7 +193,9 @@ class AppMonitor:
 
         else:
             # start with linux
-            pass
+            if self.headless:
+                self.vdisplay = Xvfb()
+                self.vdisplay.start()
         
         # start the process with the gathered command line arguments
         process = subprocess.Popen(startup_args + addl_args)
@@ -197,6 +214,8 @@ class AppMonitor:
             return True
         self.logger.debug("Starting graceful shutdown of Fldigi")
         self._client.fldigi.terminate(save_options, save_log, save_macros)
+        if self.headless:
+            self.vdisplay.stop()
 
         # wait and verify that Fldigi has shut down
         if self._wait_for_shutdown():
