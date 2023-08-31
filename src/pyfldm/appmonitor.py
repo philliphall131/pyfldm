@@ -26,6 +26,7 @@ import subprocess
 import logging
 from time import time, sleep
 from .client import Client
+from .submodules.flconfig import FlConfig
 
 MAX_STARTUP_DELAY_SECS = 10
 MAX_SHUTDOWN_DELAY_SECS = 10
@@ -65,6 +66,8 @@ class AppMonitor:
         self._client = Client(hostname, port)
         self.exe_path = exe_path
         self.logger = logging.getLogger(__name__)
+        self.config_manager = FlConfig()
+
 
         # log platform
         if self.platform == 'darwin':

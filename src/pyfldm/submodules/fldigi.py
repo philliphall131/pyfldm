@@ -92,8 +92,8 @@ class Fldigi(BaseCall):
         Terminates fldigi. Only use this if you are sure of what you are doing.
         If using AppMonitor, use care with this method as it may interfere with
         the proper flow intended for AppMonitor
-        Arguements are sent as a bitmask specifying data to save: 
-        0=options; 1=log; 2=macros
+        Arguements are specified as bools then converted and sent as a bitmask 
+        specifying data to save
 
         @param save_options(bool): True to save options; False otherwise
         @param save_log(bool): True to save log; False otherwise
