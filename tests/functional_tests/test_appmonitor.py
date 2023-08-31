@@ -130,7 +130,7 @@ class TestAppMonitor(BaseTestCase):
     
     def test_repeated_power_cycles(self):
         CYCLES = 20
-        for i in range(20):
+        for i in range(CYCLES):
             logger.info(f'Starting power cycle {i+1}')
             self.app.start()
             self.app.stop()
