@@ -20,8 +20,7 @@
 #
 ############################################################################
 
-from functional_tests.testing_runner import TestingRunner
-from functional_tests import TestAppMonitor, TestClient, TestClientText,\
+from functional_tests import TestingRunner, TestAppMonitor, TestClient, TestClientText,\
     TestClientFldigi, TestClientIo, TestClientMain, TestClientModem,\
     TestClientNavtex, TestClientRig, TestClientSpot, TestClientWefax
 

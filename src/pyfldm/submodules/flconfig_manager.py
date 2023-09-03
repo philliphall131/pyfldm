@@ -1,6 +1,6 @@
 ############################################################################
 # 
-#  File: flconfig.py
+#  File: flconfig_manager.py
 #  Copyright(c) 2023, Phillip Hall. All rights reserved.
 #
 #  This library is free software; you can redistribute it and/or
@@ -24,20 +24,33 @@ import logging
 import os
 import shutil
 from pathlib import Path
-import xml.etree.ElementTree as et
+from xml.etree import ElementTree
 import threading
 from time import sleep
+from typing import Any
 
 CONFIG_FILE = 'fldigi_def.xml'
 CONFIG_FILE_COPY = 'fldigi_def-orig.xml'
 MONITOR_INTERVAL_SECS = 2
     
-class FlConfig(threading.Thread):
-    ''' TBD
+class FlConfigManager(threading.Thread):
+    '''Used to view and update Fldigi configuratin settings. Can be used to monitor updates to the Fldigi config file as a daemon thread that will die upon the script/caller ending
+
+    This class is not intended to be created or used directly, but rather utilized under the pyfldm client object. Reference appmonitor.py which has an attribute self.config_manager that interfaces these methods.
+
+    @param config_location(str): the path to the fldigi config directory (leave blank if default installed, only needed if a unique config directory has been set up)
+    @param monitor_updates(bool): set to True to automatically begin the daemon thread to listen for config updates
+    
+    Example use:
+    >>> from pyfldm.appmonitor import AppMonitor
+    >>> app = AppMonitor()
+    >>> app.config_manager.get_config('TX_TIMEOUT')
+    5
     '''
-    def __init__(self, config_location = None, monitor_updates = False) -> None:
+    def __init__(self, config_location:str = None, monitor_updates:bool = False) -> None:
         super().__init__(daemon=True)
         self.logger = logging.getLogger(__name__)
+        self._running = False
         self._config_dir = self._get_config_dir(config_location)
         self._config_file = f'{self._config_dir}/{CONFIG_FILE}'
         self._config_tree = None
@@ -51,7 +64,12 @@ class FlConfig(threading.Thread):
     def __str__(self) -> str:
         return __name__.lower().split(".")[-1]
     
-    def _get_config_dir(self, dir_path):
+    def _get_config_dir(self, dir_path:str = None) -> str:
+        '''Finds the fldigi config directory. If specified, ensures it exists and is valid. If not valid or not supplied, uses the default fldigi config directory location
+
+        @param dir_path(str): the path to the fldigi config directory
+        @return (str): the validated path to the config directory
+        '''
         # check that config directory exists
         make_default_path = False
         if dir_path:
@@ -69,7 +87,11 @@ class FlConfig(threading.Thread):
                 self.logger.exception(f"Did not find {CONFIG_FILE} in the default Fldigi config directory: ({dir_path}). Ensure Fldigi is correctly installed and references a configuration directory. If the configuation directory is in a custom location, make sure to specify this when setting up FlConfig()")
         return f'{config_dir}'
     
-    def _parse_config_file(self):
+    def _parse_config_file(self) -> ElementTree:
+        '''Reads in the config file from xml format into a python xml tree object. Notes timestamp of the file as well
+
+        @return (ElementTree): the xml tree object of all the fldigi config items
+        '''
         if not os.path.exists(f'{self._config_dir}/{CONFIG_FILE_COPY}'):
             shutil.copy(self._config_file, f'{self._config_dir}/{CONFIG_FILE_COPY}')
 
@@ -81,22 +103,32 @@ class FlConfig(threading.Thread):
         with open(self._config_file, 'wb') as f:
             f.write(updated_file_buffer)
 
-        parser = et.XMLParser(target=et.TreeBuilder(insert_comments=True))
-        tree = et.parse(self._config_file, parser)
+        parser = ElementTree.XMLParser(target=ElementTree.TreeBuilder(insert_comments=True))
+        tree = ElementTree.parse(self._config_file, parser)
         root = tree.getroot()
         if not root.tag == 'FLDIGI_DEFS':
             raise Exception('Expected root tag to be \'FLDIGI_DEFS\' but got {!r}'.format(self.root.tag))
         self._timestamp = os.path.getmtime(self._config_file)
         return tree
     
-    def get_config(self, tag):
+    def get_config(self, tag: str) -> str:
+        '''Gets the value specified by the input tag or key
+
+        @param tag(str): The exact name (case-sensitive) of the config item
+        @return (str): the value of the config item
+        '''
         root = self._config_tree.getroot()
         node = root.find(tag)
         if node is not None:
             return node.text
         return None
     
-    def search_config(self, tag_part):
+    def search_config(self, tag_part: str) -> list:
+        '''Searches all the config items for a tag/key that has even a partial match to the input tag_part
+
+        @param tag_part(str): the entire tag, or a portion of the tag to search for
+        @return (list): a list of the tag names (as str) that match or partial match the tag_part
+        '''
         root = self._config_tree.getroot()
         results = []
         tag_part_up = tag_part.upper()
@@ -105,8 +137,13 @@ class FlConfig(threading.Thread):
                 results.append(child.tag)
         return results if results else None
     
-    def set_config(self, tag, new_value) -> bool:
-        '''Returns bool on success'''
+    def set_config(self, tag: str, new_value: Any) -> bool:
+        '''Sets a config item and updates the config file. Careful, there is no type checking and some values may not work in Fldigi. The user should understand what are valid values to update config items (reference the config file for type descriptions)
+
+        @param tag(str): the config item to update (case sensitive)
+        @param new_value(Any): the value to update the config item to
+        @return (bool): True if the value successfully set
+        '''
         root = self._config_tree.getroot()
         # first verify that the tag exists and is a single tag
         nodes = root.findall(tag)
@@ -122,11 +159,13 @@ class FlConfig(threading.Thread):
         self._config_tree.write(self._config_file)
         return True
     
-    def _update_tree(self):
+    def _update_tree(self) -> None:
+        '''Private method to update the config object'''
         new_tree = self._parse_config_file()
         self._config_tree = new_tree
 
-    def read_changes(self):
+    def read_changes(self) -> None:
+        '''Re-reads the config file and compares against the currently stored config items to determine what differences there might be and logs/prints out the difference with the config item name'''
         new_tree = self._parse_config_file()
         new_root = new_tree.getroot()
         root = self._config_tree.getroot()
@@ -137,8 +176,16 @@ class FlConfig(threading.Thread):
                 new_val = new_node.text
                 if original_val != new_val:
                     self.logger.info(f"The {child.tag} value has changed from {original_val} to {new_val}")
+                    print(f"The {child.tag} value has changed from {original_val} to {new_val}")
     
-    def run(self):
+    def start_listening(self) -> None:
+        '''Starts the thread to listen for config file changes'''
+        if not self._running:
+            self.start()
+
+    def run(self) -> None:
+        '''Overrides the Thread object run. Listens for updates to the config file for as long as the parent python script/caller is alive'''
+        self._running = True
         while True:
             # check if the timestamp changed
             new_timestamp = os.path.getmtime(self._config_file)
@@ -148,42 +195,42 @@ class FlConfig(threading.Thread):
             sleep(self._interval)
 
     #### Gets and Sets for Popular Config items ####
-    def get_confirm_exit(self) -> bool:
+    def get_confirm_exit(self):
         return self.get_config('CONFIRMEXIT')
     
-    def get_log_file_name(self) -> bool:
+    def get_log_file_name(self):
         return self.get_config('LOGBOOKFILENAME')
     
-    def get_port_in_device(self) -> bool:
+    def get_port_in_device(self):
         return self.get_config('PORTINDEVICE')
     
-    def get_port_out_device(self) -> bool:
+    def get_port_out_device(self):
         return self.get_config('PORTOUTDEVICE')
     
-    def get_full_duplex(self) -> bool:
+    def get_full_duplex(self):
         return self.get_config('IS_FULL_DUPLEX')
     
-    def get_audio_io(self) -> bool:
+    def get_audio_io(self):
         ''' Audio subsystem.  Values are as follows:
         0: OSS; 1: PortAudio; 2: PulseAudio; 3: File I/O'''
         return self.get_config('AUDIOIO')
     
-    def set_confirm_exit(self, new_val) -> bool:
+    def set_confirm_exit(self, new_val):
         return self.set_config('CONFIRMEXIT', new_val)
     
-    def set_log_file_name(self, new_val) -> bool:
+    def set_log_file_name(self, new_val):
         return self.set_config('LOGBOOKFILENAME', new_val)
     
-    def set_port_in_device(self, new_val) -> bool:
+    def set_port_in_device(self, new_val):
         return self.set_config('PORTINDEVICE', new_val)
     
-    def set_port_out_device(self, new_val) -> bool:
+    def set_port_out_device(self, new_val):
         return self.set_config('PORTOUTDEVICE', new_val)
     
-    def set_full_duplex(self, new_val) -> bool:
+    def set_full_duplex(self, new_val):
         return self.set_config('IS_FULL_DUPLEX', new_val)
     
-    def set_audio_io(self, new_val) -> bool:
+    def set_audio_io(self, new_val):
         ''' Audio subsystem.  Values are as follows:
         0: OSS; 1: PortAudio; 2: PulseAudio; 3: File I/O'''
         return self.set_config('AUDIOIO', new_val)

@@ -78,7 +78,7 @@ class TestingRunner:
         return testing_logger
     
     def get_file_name(self):
-        return datetime.now().strftime('%Y%m%d_%H%M%S_test_result.log')
+        return datetime.now().strftime('%Y%m%d_%H%M%S_functional_test_result.log')
 
     def run(self, tests):
         if isinstance(tests, list):

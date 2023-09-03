@@ -25,9 +25,10 @@ import psutil
 import subprocess
 import logging
 from time import time, sleep
-from xvfbwrapper import Xvfb
 from .client import Client
-from .submodules.flconfig import FlConfig
+from .submodules.flconfig_manager import FlConfigManager
+if sys.platform not in ['darwin', 'win32']:
+    from xvfbwrapper import Xvfb
 
 MAX_STARTUP_DELAY_SECS = 10
 MAX_SHUTDOWN_DELAY_SECS = 10
@@ -44,7 +45,7 @@ class AppMonitor:
     Example for linux: exe_path = "/home/myself/Desktop/fldigi-folder/fldigi-4.1.26
 
     Example use:
-    >>> from pyfldm.appMonitor import AppMonitor
+    >>> from pyfldm.appmonitor import AppMonitor
     >>> app = AppMonitor()
     >>> app.start()
     >>> # wait a few seconds for Fldigi to start up
@@ -52,9 +53,7 @@ class AppMonitor:
     True
     >>> app.is_functional() # verifies that the xmlrpc interface is responsive
     True
-    >>> result = app.stop() # asks fldigi to gracefully shut down, returns a 0 if successfully stopped, 1 if not
-    >>> if not result:
-    ...     app.kill()  # forcibly kills the process
+    >>> result = app.stop(force_if_unsuccessful=True) # asks fldigi to gracefully shut down, force kills if enabled
     >>> app.is_running()
     False
     '''
@@ -64,7 +63,8 @@ class AppMonitor:
                  port:int=7362, 
                  exe_path:str=None, 
                  headless:bool=False,
-                 multi:bool=False) -> None:
+                 multi:bool=False,
+                 monitor_config_updates=False) -> None:
         self.platform = sys.platform
         self.process_id = None
         self.hostname = hostname
@@ -72,8 +72,7 @@ class AppMonitor:
         self._client = Client(hostname, port)
         self.exe_path = exe_path
         self.logger = logging.getLogger(__name__)
-        self.config_manager = FlConfig()
-
+        self.config_manager = FlConfigManager(monitor_updates=monitor_config_updates)
         self.headless = headless
         self.multi = multi
         self.vdisplay = None
@@ -91,6 +90,16 @@ class AppMonitor:
             self.logger.debug("Detected Windows")
         else:
             self.logger.debug("Detected Linux/Other OS")
+
+        if self.headless:
+            if self.platform in ['darwin', 'win32']:
+                self.logger.warning("Headless mode not supported on Windows/MacOS")
+                self.headless = False
+            else:
+                paths = os.environ['PATH'].split(os.pathsep)
+                if not any(os.access(os.path.join(path, 'Xvfb'), os.X_OK) for path in paths):
+                    self.logger.exception("Cannot find Xvfb. Headless mode will only work with Xvfb installed. Please install it and try again.")
+                
 
     def _get_process_id(self) -> int:
         if self.process_id:

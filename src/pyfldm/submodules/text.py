@@ -28,7 +28,7 @@ class Text(BaseCall):
     '''Houses the commands in the text group in the XML-RPC spec for fldigi.
     Reference: http://www.w1hkj.com/FldigiHelp/xmlrpc_control_page.html
 
-    This class is not intended to be created or used directly, but rather utilized under the pyfldm client object. Reference Client.py which has an attribute self.log that interfaces these methods.
+    This class is not intended to be created or used directly, but rather utilized under the pyfldm client object. Reference client.py which has an attribute self.text that interfaces these methods.
 
     @param client(xmlrpc.client.ServerProxy): a ServerProxy client object used to make http requests via the fldigi xmlrpc api
     
